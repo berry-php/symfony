@@ -1,6 +1,6 @@
 # Berry Symfony Bundle
 
-Symfony bundle for the berry/html eDSL
+Symfony bundle for the [berry/html](https://github.com/atomicptr/berry) eDSL
 
 ## Usage
 
