@@ -1,0 +1,30 @@
+{
+    "name": "berry/symfony",
+    "description": "Symfony bundle for the berry/html eDSL",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Berry\\Symfony\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Christopher Kaster",
+            "email": "me@atomicptr.de"
+        }
+    ],
+    "require": {
+        "symfony/framework-bundle": "^7|^8",
+        "berry/html": "^0"
+    },
+    "require-dev": {
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.1"
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    }
+}
