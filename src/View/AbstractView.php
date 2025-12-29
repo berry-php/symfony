@@ -2,10 +2,13 @@
 
 namespace Berry\Symfony\View;
 
+use Berry\Traits\HasInspector;
 use Berry\Renderable;
 
 abstract class AbstractView implements Renderable
 {
+    use HasInspector;
+
     abstract public function render(): Renderable;
 
     public function toString(): string
@@ -22,7 +25,9 @@ abstract class AbstractView implements Renderable
     {
         $data = $this->render()->toArray();
 
+        $class = static::class;
+
         // replace the class of the rendered element with ours
-        return [static::class, $data[1], $data[2]];
+        return ["$class ({$data[0]})", $data[1], $data[2]];
     }
 }
