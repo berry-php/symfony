@@ -23,7 +23,11 @@
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-symfony": "^2.0",
-        "phpstan/phpstan-deprecation-rules": "^2.0"
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "symfony/ux-icons": "^2"
+    },
+    "suggest": {
+        "symfony/ux-icons": "If you want to use \\Berry\\Symfony\\UX\\IconFactory"
     },
     "config": {
         "allow-plugins": {
