@@ -20,8 +20,8 @@ Next we'll create two views one for the layout and one for the index page:
 namespace App\View;
 
 use Berry\Html5\Enums\Rel;
-use Berry\Symfony\View\AbstractView;
-use Berry\Renderable;
+use Berry\Layout;
+use Berry\Element;
 
 use function Berry\Html5\body;
 use function Berry\Html5\div;
@@ -31,14 +31,9 @@ use function Berry\Html5\link;
 use function Berry\Html5\script;
 use function Berry\Html5\title;
 
-class AppLayout extends AbstractView
+class AppLayout extends Layout
 {
-    // we set the content we want to render inside the layout in the constructor
-    public function __construct(
-        private Renderable $content
-    ) {}
-
-    public function render(): Renderable
+    public function renderTree(): Element
     {
         return html()
             ->child(head()
@@ -50,7 +45,7 @@ class AppLayout extends AbstractView
             ->child(body()
                 ->child(div()
                     ->class('container')
-                    ->child($this->content))
+                    ->child($this->renderSlot('content')))
                 // also we add HTMX
                 ->child(script()->src('https://cdnjs.cloudflare.com/ajax/libs/htmx/2.0.7/htmx.min.js')));
     }
@@ -65,8 +60,8 @@ class AppLayout extends AbstractView
 
 namespace App\View;
 
-use Berry\Symfony\View\AbstractView;
-use Berry\Renderable;
+use Berry\Element;
+use Berry\Layout;
 use Symfony\Component\Routing\Router;
 
 use function Berry\Html5\button;
@@ -74,14 +69,14 @@ use function Berry\Html5\div;
 use function Berry\Html5\h1;
 use function Berry\Html5\p;
 
-class IndexPage extends AbstractView
+class IndexPage extends Component
 {
     // here we add the router to create urls
     public function __construct(
         private Router $router
     ) {}
 
-    public function render(): Renderable
+    public function renderTree(): Element
     {
         return div()
             ->child(h1()->text('Counter Page'))
@@ -91,7 +86,7 @@ class IndexPage extends AbstractView
     }
 
     // we make the button public so we can later access it from the controller
-    public function counterButton(int $value): Renderable
+    public function counterButton(int $value): Element
     {
         return button()
             ->id('counter-button')
@@ -128,9 +123,8 @@ class IndexController extends AbstractController
     public function index(): Response
     {
         // we create a page object wrapped inside our layout
-        $page = new AppLayout(
-            new IndexPage($this->container->get('router'))
-        );
+        $page = new AppLayout()
+            ->slot('content', new IndexPage($this->container->get('router')));
 
         // and last we just renderBerryView
         return $this->renderBerryView($page);
