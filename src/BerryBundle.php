@@ -3,6 +3,7 @@
 namespace Berry\Symfony;
 
 use Berry\Symfony\UX\IconFactory;
+use Berry\Symfony\UX\IconFactoryInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
@@ -20,6 +21,7 @@ class BerryBundle extends AbstractBundle
 
         if (isset($enabledBundles['UXIconsBundle'])) {
             $services->set(IconFactory::class);
+            $services->alias(IconFactoryInterface::class, IconFactory::class);
         }
     }
 }

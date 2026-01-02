@@ -7,7 +7,7 @@ use Berry\UnsafeRawText;
 use Symfony\UX\Icons\Exception\IconNotFoundException;
 use Symfony\UX\Icons\IconRendererInterface;
 
-final class IconFactory
+final class IconFactory implements IconFactoryInterface
 {
     public function __construct(
         private IconRendererInterface $iconRenderer,

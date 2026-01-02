@@ -24,10 +24,12 @@
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-symfony": "^2.0",
         "phpstan/phpstan-deprecation-rules": "^2.0",
-        "symfony/ux-icons": "^2"
+        "symfony/ux-icons": "^2",
+        "symfony/security-bundle": "^7|^8"
     },
     "suggest": {
-        "symfony/ux-icons": "For \\Berry\\Symfony\\UX\\IconFactory"
+        "symfony/ux-icons": "Required to render icons via the IconFactory",
+        "symfony/security-bundle": "Allows accessing the current user within the AbstractViewFactory"
     },
     "config": {
         "allow-plugins": {
