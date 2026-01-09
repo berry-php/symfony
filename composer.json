@@ -29,7 +29,7 @@
     },
     "suggest": {
         "symfony/ux-icons": "Required to render icons via the IconFactory",
-        "symfony/security-bundle": "Allows accessing the current user within the AbstractViewFactory"
+        "symfony/security-bundle": "Allows accessing the current user, token or check permissions within components"
     },
     "config": {
         "allow-plugins": {

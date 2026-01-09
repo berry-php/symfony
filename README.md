@@ -60,7 +60,7 @@ class AppLayout
 namespace App\View;
 
 use Berry\Element;
-use Berry\Symfony\Locator\Trait\WithGenerateUrl;
+use Berry\Symfony\Locator\Trait\WithGenerateUrlLocator;
 use Symfony\Component\Routing\Router;
 
 use function Berry\Html5\button;
@@ -70,7 +70,8 @@ use function Berry\Html5\p;
 
 class IndexPage
 {
-    use WithGenerateUrl;
+    // gives us access to $this->generateUrl(...)
+    use WithGenerateUrlLocator;
 
     public function render(): Element
     {
