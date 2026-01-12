@@ -7,6 +7,7 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use LogicException;
@@ -24,6 +25,7 @@ class ComponentServiceLocator implements ServiceSubscriberInterface
     {
         return [
             AuthorizationCheckerInterface::class => '?' . AuthorizationCheckerInterface::class,
+            CsrfTokenManagerInterface::class => '?' . CsrfTokenManagerInterface::class,
             IconFactoryInterface::class => '?' . IconFactoryInterface::class,
             RouterInterface::class => '?' . RouterInterface::class,
             TokenStorageInterface::class => '?' . TokenStorageInterface::class,
@@ -35,6 +37,12 @@ class ComponentServiceLocator implements ServiceSubscriberInterface
     {
         /** @var AuthorizationCheckerInterface */
         return self::getService(AuthorizationCheckerInterface::class, 'symfony/security-bundle');
+    }
+
+    public static function getCsrfTokenManager(): CsrfTokenManagerInterface
+    {
+        /** @var CsrfTokenManagerInterface */
+        return self::getService(CsrfTokenManagerInterface::class, 'symfony/security-bundle');
     }
 
     public static function getIconFactory(): IconFactoryInterface
