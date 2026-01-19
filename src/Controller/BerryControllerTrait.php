@@ -12,16 +12,27 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 trait BerryControllerTrait
 {
     /**
+     * Renders a view as a string
+     */
+    protected function renderBerryViewAsString(Element $element, ?StringRenderer $renderer = null): string
+    {
+        $renderer ??= new StringConcatRenderer();
+        $element->render($renderer);
+        return $renderer->renderToString();
+    }
+
+    /**
      * Renders a view.
      *
      * @param array<string, string> $headers
      */
     protected function renderBerryView(Element $element, int $statusCode = 200, array $headers = [], ?StringRenderer $renderer = null): Response
     {
-        $renderer ??= new StringConcatRenderer();
-        $element->render($renderer);
-
-        return new Response($renderer->renderToString(), $statusCode, $headers);
+        return new Response(
+            $this->renderBerryViewAsString($element, $renderer),
+            $statusCode,
+            $headers,
+        );
     }
 
     /**
