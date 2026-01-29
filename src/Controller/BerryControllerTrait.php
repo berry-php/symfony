@@ -4,6 +4,7 @@ namespace Berry\Symfony\Controller;
 
 use Berry\Element;
 use Symfony\Component\HttpFoundation\Response;
+use Deprecated;
 
 trait BerryControllerTrait
 {
@@ -12,6 +13,7 @@ trait BerryControllerTrait
      *
      * @param array<string, string> $headers
      */
+    #[Deprecated('Switch to Element->toResponse() or BaseComponent->toResponse()')]
     protected function renderBerryView(Element $element, int $statusCode = 200, array $headers = []): Response
     {
         return new Response(

@@ -21,17 +21,18 @@
     ],
     "require": {
         "php": ">=8.3",
-        "symfony/framework-bundle": "^7|^8",
-        "berry/html": ">=0.14"
+        "berry/html": ">=0.14",
+        "symfony/framework-bundle": "^7|^8"
     },
     "require-dev": {
+        "berry/extension-method-stub-generator": "^0.2.0",
+        "pestphp/pest": "^4",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.1",
-        "phpstan/phpstan-symfony": "^2.0",
         "phpstan/phpstan-deprecation-rules": "^2.0",
-        "symfony/ux-icons": "^2",
+        "phpstan/phpstan-symfony": "^2.0",
         "symfony/security-bundle": "^7|^8",
-        "pestphp/pest": "^4"
+        "symfony/ux-icons": "^2"
     },
     "scripts": {
         "test": "php vendor/bin/pest",
@@ -50,7 +51,8 @@
     "config": {
         "allow-plugins": {
             "phpstan/extension-installer": true,
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "berry/extension-method-stub-generator": true
         }
     }
 }

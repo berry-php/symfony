@@ -1,3 +1,6 @@
+includes:
+    - .berry/extension.neon
+
 parameters:
     level: 10
     phpVersion: 80300

@@ -1,0 +1,89 @@
+{
+    "extensions": [
+        {
+            "namespace": "Berry\\Html",
+            "class": [
+                "HtmlTag",
+                "HtmlVoidTag"
+            ],
+            "uses": [
+                "Symfony\\Component\\HttpFoundation\\Response"
+            ],
+            "methods": [
+                {
+                    "name": "toResponse",
+                    "doc": "Transforms element into a Symfony response",
+                    "returns": "Response",
+                    "args": [
+                        {
+                            "type": "int",
+                            "name": "status",
+                            "defaultValue": "200"
+                        },
+                        {
+                            "type": "array<string, mixed>",
+                            "name": "headers",
+                            "defaultValue": "[]"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "namespace": "Berry\\Html",
+            "class": "HtmlTag",
+            "uses": [
+                "Symfony\\Contracts\\Translation\\TranslatorInterface"
+            ],
+            "methods": [
+                {
+                    "name": "trans",
+                    "doc": "Appends a translated string to the node",
+                    "returns": "static",
+                    "args": [
+                        {
+                            "type": "string",
+                            "name": "id"
+                        },
+                        {
+                            "type": "array<string, mixed>",
+                            "name": "parameters",
+                            "defaultValue": "[]"
+                        },
+                        {
+                            "type": "?string",
+                            "name": "domain",
+                            "defaultValue": "null"
+                        },
+                        {
+                            "type": "?string",
+                            "name": "locale",
+                            "defaultValue": "null"
+                        },
+                        {
+                            "type": "?TranslatorInterface",
+                            "name": "translator",
+                            "defaultValue": "null"
+                        },
+                        {
+                            "type": "?bool",
+                            "name": "escape",
+                            "defaultValue": "true"
+                        }
+                    ]
+                },
+                {
+                    "name": "dump",
+                    "doc": "Dumps variables into the node using Symfony VarDumper",
+                    "returns": "static",
+                    "args": [
+                        {
+                            "type": "mixed...",
+                            "name": "vars"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
