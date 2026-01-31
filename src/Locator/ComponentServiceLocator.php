@@ -3,14 +3,12 @@
 namespace Berry\Symfony\Locator;
 
 use Berry\Symfony\UX\IconFactoryInterface;
-use Pest\Plugins\Environment;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment as TwigEnvironment;
-use LogicException;
 
 class ComponentServiceLocator extends AbstractServiceLocator
 {
