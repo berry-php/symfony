@@ -8,7 +8,6 @@ use Berry\Symfony\UX\IconFactoryInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
-use Symfony\Component\VarDumper\VarDumper;
 
 class BerryBundle extends AbstractBundle
 {
@@ -30,10 +29,6 @@ class BerryBundle extends AbstractBundle
             $services->set(IconFactory::class);
             $services->alias(IconFactoryInterface::class, IconFactory::class);
         }
-
-        BerryExtensions::install(
-            class_exists(VarDumper::class),
-        );
     }
 
     public function boot(): void

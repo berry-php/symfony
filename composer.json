@@ -6,7 +6,10 @@
     "autoload": {
         "psr-4": {
             "Berry\\Symfony\\": "src/"
-        }
+        },
+        "files": [
+            "src/bootstrap.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
