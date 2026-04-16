@@ -34,6 +34,7 @@
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-symfony": "^2.0",
+        "symfony/form": "^7|^8",
         "symfony/security-bundle": "^7|^8",
         "symfony/ux-icons": "^2"
     },
@@ -47,6 +48,7 @@
         ]
     },
     "suggest": {
+        "symfony/form": "Allows rendering Symfony forms with Berry",
         "symfony/ux-icons": "Required to render icons via the IconFactory",
         "symfony/security-bundle": "Allows accessing the current user, token or check permissions within components",
         "twig/twig": "Allows rendering twig blocks and templates with Berry"

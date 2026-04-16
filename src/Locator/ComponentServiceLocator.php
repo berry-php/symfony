@@ -2,6 +2,7 @@
 
 namespace Berry\Symfony\Locator;
 
+use Berry\Symfony\Form\FormRendererInterface;
 use Berry\Symfony\UX\IconFactoryInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -22,6 +23,7 @@ class ComponentServiceLocator extends AbstractServiceLocator
             TokenStorageInterface::class,
             TranslatorInterface::class,
             TwigEnvironment::class,
+            FormRendererInterface::class,
         ];
     }
 
@@ -65,5 +67,11 @@ class ComponentServiceLocator extends AbstractServiceLocator
     {
         /** @var TwigEnvironment */
         return self::getService(TwigEnvironment::class, 'twig/twig');
+    }
+
+    public static function getFormRenderer(): FormRendererInterface
+    {
+        /** @var FormRendererInterface */
+        return self::getService(FormRendererInterface::class, 'symfony/form');
     }
 }
