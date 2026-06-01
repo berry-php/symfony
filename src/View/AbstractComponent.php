@@ -2,6 +2,7 @@
 
 namespace Berry\Symfony\View;
 
+use Berry\Symfony\Locator\Trait\WithAssetLocator;
 use Berry\Symfony\Locator\Trait\WithCreateCsrfTokenLocator;
 use Berry\Symfony\Locator\Trait\WithGenerateUrlLocator;
 use Berry\Symfony\Locator\Trait\WithGetUserLocator;
@@ -14,6 +15,7 @@ use Berry\Component;
 
 abstract class AbstractComponent extends Component
 {
+    use WithAssetLocator;
     use WithCreateCsrfTokenLocator;
     use WithGenerateUrlLocator;
     use WithGetUserLocator;

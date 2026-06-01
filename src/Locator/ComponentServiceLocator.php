@@ -4,6 +4,7 @@ namespace Berry\Symfony\Locator;
 
 use Berry\Symfony\Form\FormRendererInterface;
 use Berry\Symfony\UX\IconFactoryInterface;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -19,6 +20,7 @@ class ComponentServiceLocator extends AbstractServiceLocator
             AuthorizationCheckerInterface::class,
             CsrfTokenManagerInterface::class,
             IconFactoryInterface::class,
+            Packages::class,
             RouterInterface::class,
             TokenStorageInterface::class,
             TranslatorInterface::class,
@@ -43,6 +45,12 @@ class ComponentServiceLocator extends AbstractServiceLocator
     {
         /** @var IconFactoryInterface */
         return self::getService(IconFactoryInterface::class, 'symfony/ux-icons');
+    }
+
+    public static function getAssetPackages(): Packages
+    {
+        /** @var Packages */
+        return self::getService(Packages::class, 'symfony/asset');
     }
 
     public static function getRouter(): RouterInterface
