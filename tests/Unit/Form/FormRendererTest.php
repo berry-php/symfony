@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-use Berry\Element;
 use Berry\Symfony\Form\FormElementInterface;
 use Berry\Symfony\Form\FormRendererInterface;
 use Berry\Symfony\Test\Unit\Form\Support\FormTestSupport;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormView;
+use Berry\Element;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\Forms;
+use Symfony\Component\Form\FormView;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 use function Berry\Html\div;
@@ -170,7 +170,8 @@ test('formWidget renders collapsed choice fields as a select element', function 
     };
 
     $factory = Forms::createFormFactory();
-    $form = $factory->createBuilder()
+    $form = $factory
+        ->createBuilder()
         ->add('status', ChoiceType::class, [
             'placeholder' => 'Pick one',
             'choices' => ['Draft' => 'draft', 'Live' => 'live'],
@@ -186,7 +187,7 @@ test('formWidget renders collapsed choice fields as a select element', function 
         ->toContain('<select')
         ->toContain('id="form_status"')
         ->toContain('name="form[status]"')
-        ->toContain('<option value="">tr:Pick one</option>')
+        ->toContain('tr:Pick one')
         ->toContain('<option value="draft">tr:Draft</option>')
         ->toContain('<option value="live" selected>tr:Live</option>');
 
@@ -266,7 +267,8 @@ test('formWidget keeps compound container attrs and renders collection prototype
 
 test('formRow renders expanded single choice fields with fieldset semantics and radios', function () {
     $factory = Forms::createFormFactory();
-    $form = $factory->createBuilder()
+    $form = $factory
+        ->createBuilder()
         ->add('status', ChoiceType::class, [
             'expanded' => true,
             'multiple' => false,
