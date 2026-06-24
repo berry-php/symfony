@@ -2,6 +2,7 @@
 
 namespace Berry\Symfony;
 
+use Berry\Symfony\DependencyInjection\Compiler\AsTwigViewPass;
 use Berry\Symfony\Form\Elements\ButtonFormElement;
 use Berry\Symfony\Form\Elements\CheckboxFormElement;
 use Berry\Symfony\Form\Elements\ChoiceFormElement;
@@ -11,17 +12,42 @@ use Berry\Symfony\Form\FormElementRegistry;
 use Berry\Symfony\Form\FormRenderer;
 use Berry\Symfony\Form\FormRendererInterface;
 use Berry\Symfony\Locator\ComponentServiceLocator;
+use Berry\Symfony\Twig\TwigViewExtension;
 use Berry\Symfony\UX\IconFactory;
 use Berry\Symfony\UX\IconFactoryInterface;
+use Berry\Symfony\View\Attribute\AsTwigView;
+use ReflectionClass;
+use ReflectionNamedType;
+use Reflector;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
+use Twig\Extension\AbstractExtension;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator;
 
 class BerryBundle extends AbstractBundle
 {
+    public function build(ContainerBuilder $container): void
+    {
+        parent::build($container);
+
+        $container->registerAttributeForAutoconfiguration(
+            AsTwigView::class,
+            static function (ChildDefinition $definition, AsTwigView $attribute, Reflector $reflector): void {
+                if ($reflector instanceof ReflectionClass && self::hasRequiredRuntimeConstructorParameter($reflector)) {
+                    $definition->setAutowired(false);
+                }
+
+                $definition->addTag(AsTwigViewPass::TAG, ['name' => $attribute->name]);
+            },
+        );
+
+        $container->addCompilerPass(new AsTwigViewPass());
+    }
+
     /**
      * @param array<string, string> $config
      */
@@ -33,6 +59,12 @@ class BerryBundle extends AbstractBundle
             ->set(ComponentServiceLocator::class)
             ->public()
             ->tag('container.service_subscriber');
+
+        if (class_exists(AbstractExtension::class)) {
+            $services
+                ->set(TwigViewExtension::class)
+                ->tag('twig.extension');
+        }
 
         $enabledBundles = $builder->getParameter('kernel.bundles');
 
@@ -68,5 +100,31 @@ class BerryBundle extends AbstractBundle
         if ($this->container?->has(ComponentServiceLocator::class)) {
             $this->container->get(ComponentServiceLocator::class);
         }
+    }
+
+    /**
+     * @param ReflectionClass<object> $reflector
+     */
+    private static function hasRequiredRuntimeConstructorParameter(ReflectionClass $reflector): bool
+    {
+        $constructor = $reflector->getConstructor();
+
+        if ($constructor === null) {
+            return false;
+        }
+
+        foreach ($constructor->getParameters() as $parameter) {
+            if ($parameter->isOptional()) {
+                continue;
+            }
+
+            $type = $parameter->getType();
+
+            if (!$type instanceof ReflectionNamedType || $type->isBuiltin()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
