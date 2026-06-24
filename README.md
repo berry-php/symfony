@@ -60,20 +60,16 @@ class AppLayout
 namespace App\View;
 
 use Berry\Element;
-use Berry\Symfony\Locator\Trait\WithGenerateUrlLocator;
-use Symfony\Component\Routing\Router;
+use Berry\Symfony\View\AbstractComponent;
 
 use function Berry\Html\button;
 use function Berry\Html\div;
 use function Berry\Html\h1;
 use function Berry\Html\p;
 
-class IndexPage
+class IndexPage extends AbstractComponent
 {
-    // gives us access to $this->generateUrl(...)
-    use WithGenerateUrlLocator;
-
-    public function render(): Element
+    public function renderComponent(): Element
     {
         return div()
             ->child(h1()->text('Counter Page'))
@@ -106,16 +102,11 @@ namespace App\Controller;
 
 use App\View\AppLayout;
 use App\View\IndexPage;
-use Berry\Symfony\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-// NOTE: This is an abstract controller from berry/symfony
-class IndexController extends AbstractController
+class IndexController
 {
-    // if you dont want to use our AbstractController you can alternative just add the trait
-    // use BerryControllerTrait;
-
     public function __construct(
         private AppLayout $layout,
     ) {}
@@ -124,10 +115,10 @@ class IndexController extends AbstractController
     public function index(IndexPage $page): Response
     {
         // we create a page object wrapped inside our layout
-        $content = $this->layout->render('Index Page', $page->render());
+        $content = $this->layout->render('Index Page', $page->renderComponent());
 
-        // and last we just renderBerryView
-        return $this->renderBerryView($content);
+        // and last we turn the Berry element into a Symfony response
+        return $content->toResponse();
     }
 
     #[Route('/counter/{value}', name: 'app_counter', methods: ['POST'])]
@@ -138,12 +129,51 @@ class IndexController extends AbstractController
         $content = $page->counterButton($value);
 
         // and only call the counterButton
-        return $this->renderBerryView($content);
+        return $content->toResponse();
     }
 }
+```
+
+### Twig views
+
+You can also expose Berry components as Twig functions with the `AsTwigView` attribute:
+
+**src/View/HelloView.php**
+
+```php
+<?php declare(strict_types=1);
+
+namespace App\View;
+
+use Berry\Element;
+use Berry\Symfony\View\AbstractComponent;
+use Berry\Symfony\View\Attribute\AsTwigView;
+
+use function Berry\Html\h1;
+
+#[AsTwigView(name: "hello")]
+final class HelloView extends AbstractComponent
+{
+    public function __construct(
+        private readonly ?string $name = null,
+    ) {}
+
+    public function renderComponent(): Element
+    {
+        $name = $this->name ?? 'world';
+
+        return h1()->text("Hello, {$name}");
+    }
+}
+```
+
+You can then render it from Twig:
+
+```twig
+{{ hello() }}
+{{ hello('Christopher') }}
 ```
 
 ## License
 
 MIT
-
