@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony\Locator\Trait;
 
@@ -17,6 +19,9 @@ trait WithIsGrantedLocator
      */
     protected function isGranted(mixed $attribute, mixed $subject = null): bool
     {
-        return ($this->authorizationCheckerLocator ?? ComponentServiceLocator::getAuthorizationChecker())->isGranted($attribute, $subject);
+        return ($this->authorizationCheckerLocator ?? ComponentServiceLocator::getAuthorizationChecker())->isGranted(
+            $attribute,
+            $subject,
+        );
     }
 }

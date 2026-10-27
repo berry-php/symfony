@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony\Locator\Trait;
 
@@ -17,8 +19,15 @@ trait WithGenerateUrlLocator
      *
      * @see UrlGeneratorInterface
      */
-    protected function generateUrl(string $route, array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string
-    {
-        return ($this->routerLocator ?? ComponentServiceLocator::getRouter())->generate($route, $parameters, $referenceType);
+    protected function generateUrl(
+        string $route,
+        array $parameters = [],
+        int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH,
+    ): string {
+        return ($this->routerLocator ?? ComponentServiceLocator::getRouter())->generate(
+            $route,
+            $parameters,
+            $referenceType,
+        );
     }
 }

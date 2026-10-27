@@ -1,15 +1,17 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony\Form;
 
 use Berry\Html\HtmlTag;
 use Berry\Html\HtmlVoidTag;
-use Berry\Element;
+
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormView;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Closure;
+
 use LogicException;
 use Stringable;
 
@@ -119,7 +121,7 @@ trait WithFormRenderUtils
 
     protected function isEmpty(mixed $value): bool
     {
-        return $value === null || $value === '' || (is_array($value) && count($value) === 0);
+        return $value === null || $value === '' || is_array($value) && count($value) === 0;
     }
 
     /**
@@ -131,11 +133,11 @@ trait WithFormRenderUtils
         $vars = $this->filterArrayStringKeys($view->vars);
 
         foreach (['attr', 'row_attr', 'label_attr', 'help_attr'] as $attributeKey) {
-            if (array_key_exists($attributeKey, $variables) && is_array($variables[$attributeKey] ?? null)) {
-                $base = is_array($vars[$attributeKey] ?? null) ? $vars[$attributeKey] : [];
+            if (!(array_key_exists($attributeKey, $variables) && is_array($variables[$attributeKey] ?? null))) { continue; }
+
+$base = is_array($vars[$attributeKey] ?? null) ? $vars[$attributeKey] : [];
                 $vars[$attributeKey] = array_replace($base, $variables[$attributeKey]);
                 unset($variables[$attributeKey]);
-            }
         }
 
         return array_replace($vars, $variables);
@@ -175,8 +177,11 @@ trait WithFormRenderUtils
      * @param array<string, mixed> $variables
      * @return Tag
      */
-    protected function applyWidgetAttributes(HtmlTag|HtmlVoidTag $tag, FormView $view, array $variables): HtmlTag|HtmlVoidTag
-    {
+    protected function applyWidgetAttributes(
+        HtmlTag|HtmlVoidTag $tag,
+        FormView $view,
+        array $variables,
+    ): HtmlTag|HtmlVoidTag {
         $id = $this->viewId($variables);
 
         $tag->attr('id', $id, escapeKey: false);
@@ -217,8 +222,11 @@ trait WithFormRenderUtils
      * @param array<string, mixed> $variables
      * @return Tag
      */
-    protected function applyWidgetContainerAttributes(HtmlTag|HtmlVoidTag $tag, FormView $view, array $variables): HtmlTag|HtmlVoidTag
-    {
+    protected function applyWidgetContainerAttributes(
+        HtmlTag|HtmlVoidTag $tag,
+        FormView $view,
+        array $variables,
+    ): HtmlTag|HtmlVoidTag {
         $id = $this->viewId($variables);
 
         if ($id !== '') {
@@ -281,7 +289,7 @@ trait WithFormRenderUtils
     /**
      * @param array<string, mixed> $parameters
      */
-    protected function trans(mixed $text, array $parameters = [], string|null|false $domain = null): string
+    protected function trans(mixed $text, array $parameters = [], string|false|null $domain = null): string
     {
         if ($text instanceof TranslatableInterface && $this->translator !== null) {
             return $text->trans($this->translator);
@@ -325,9 +333,7 @@ trait WithFormRenderUtils
         $transParams = $this->transParams($vars, 'label_translation_parameters');
         $translated = $this->trans($label, $transParams, $domain);
 
-        return $translated === '' && $button
-            ? $this->humanize($this->strval($vars['name'] ?? ''))
-            : $translated;
+        return $translated === '' && $button ? $this->humanize($this->strval($vars['name'] ?? '')) : $translated;
     }
 
     /**
@@ -354,7 +360,7 @@ trait WithFormRenderUtils
      */
     protected function filterArrayStringKeys(array $vars): array
     {
-        return array_filter($vars, fn(mixed $key) => is_string($key), ARRAY_FILTER_USE_KEY);
+        return array_filter($vars, static fn(mixed $key) => is_string($key), ARRAY_FILTER_USE_KEY);
     }
 
     /**
@@ -374,7 +380,7 @@ trait WithFormRenderUtils
     /**
      * @param array<string, mixed> $variables
      */
-    protected function transDomain(array $variables, string $key = 'translation_domain'): string|null|false
+    protected function transDomain(array $variables, string $key = 'translation_domain'): string|false|null
     {
         $domain = $variables[$key] ?? null;
         assert(is_string($domain) || $domain === null || $domain === false);
@@ -392,6 +398,6 @@ trait WithFormRenderUtils
             return [];
         }
 
-        return array_filter(iterator_to_array($errors), fn($err) => $err instanceof FormError);
+        return array_filter(iterator_to_array($errors), static fn($err) => $err instanceof FormError);
     }
 }

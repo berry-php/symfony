@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony\Form\Elements;
 
@@ -17,7 +19,10 @@ final class ChoiceFormElement extends AbstractFormElement
 {
     public function supports(FormView $view): bool
     {
-        return $this->hasBlockPrefix($view, 'choice') && !$this->arrayGetBool($this->filterArrayStringKeys($view->vars), 'expanded');
+        return (
+            $this->hasBlockPrefix($view, 'choice')
+                && !$this->arrayGetBool($this->filterArrayStringKeys($view->vars), 'expanded')
+        );
     }
 
     public function render(FormView $view, FormRendererInterface $formRenderer, array $variables = []): Element
@@ -37,19 +42,32 @@ final class ChoiceFormElement extends AbstractFormElement
             ->map(fn($select) => $this->applyWidgetAttributes($select, $view, $vars))
             ->multiple($multiple)
             ->children([
-                ...(!$multiple && $placeholder !== null ? [
-                    option()
-                        ->value('')
-                        ->selected($this->isSelected($vars, ''))
-                        ->map(fn(Option $option): Option => $this->applyElementAttributes($option, $vars['placeholder_attr'] ?? []))
-                        ->text($this->trans($placeholder, [], $this->transDomain($vars, 'choice_translation_domain'))),
-                ] : []),
+                ...(
+                    !$multiple && $placeholder !== null
+                        ? [
+                            option()
+                                ->value('')
+                                ->selected($this->isSelected($vars, ''))
+                                ->map(fn(Option $option): Option => $this->applyElementAttributes(
+                                    $option,
+                                    $vars['placeholder_attr'] ?? [],
+                                ))
+                                ->text($this->trans(
+                                    $placeholder,
+                                    [],
+                                    $this->transDomain($vars, 'choice_translation_domain'),
+                                )),
+                        ] : []
+                ),
                 ...$this->renderChoices($preferredChoices, $vars),
-                ...(count($preferredChoices) > 0 && count($choices) > 0 ? [
-                    option()
-                        ->disabled()
-                        ->text($this->arrayGetString($vars, 'separator', '-------------------')),
-                ] : []),
+                ...(
+                    count($preferredChoices) > 0 && count($choices) > 0
+                        ? [
+                            option()
+                                ->disabled()
+                                ->text($this->arrayGetString($vars, 'separator', '-------------------')),
+                        ] : []
+                ),
                 ...$this->renderChoices($choices, $vars),
             ]);
     }
@@ -89,7 +107,7 @@ final class ChoiceFormElement extends AbstractFormElement
             ->text($this->trans(
                 $choice->label,
                 $this->filterArrayStringKeys($choice->labelTranslationParameters),
-                $this->transDomain($vars, 'choice_translation_domain')
+                $this->transDomain($vars, 'choice_translation_domain'),
             ));
     }
 
@@ -100,10 +118,10 @@ final class ChoiceFormElement extends AbstractFormElement
      */
     private function renderChoices(array $choices, array $vars): array
     {
-        return array_map(
-            fn(ChoiceGroupView|ChoiceView $choice): Element => $this->renderChoice($choice, $vars),
-            array_values($choices),
-        );
+        return array_map(fn(ChoiceGroupView|ChoiceView $choice): Element => $this->renderChoice(
+            $choice,
+            $vars,
+        ), array_values($choices));
     }
 
     /**

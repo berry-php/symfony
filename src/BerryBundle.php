@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony;
 
@@ -34,16 +36,17 @@ class BerryBundle extends AbstractBundle
     {
         parent::build($container);
 
-        $container->registerAttributeForAutoconfiguration(
-            AsTwigView::class,
-            static function (ChildDefinition $definition, AsTwigView $attribute, Reflector $reflector): void {
-                if ($reflector instanceof ReflectionClass && self::hasRequiredRuntimeConstructorParameter($reflector)) {
-                    $definition->setAutowired(false);
-                }
+        $container->registerAttributeForAutoconfiguration(AsTwigView::class, static function (
+            ChildDefinition $definition,
+            AsTwigView $attribute,
+            Reflector $reflector,
+        ): void {
+            if ($reflector instanceof ReflectionClass && self::hasRequiredRuntimeConstructorParameter($reflector)) {
+                $definition->setAutowired(false);
+            }
 
-                $definition->addTag(AsTwigViewPass::TAG, ['name' => $attribute->name]);
-            },
-        );
+            $definition->addTag(AsTwigViewPass::TAG, ['name' => $attribute->name]);
+        });
 
         $container->addCompilerPass(new AsTwigViewPass());
     }

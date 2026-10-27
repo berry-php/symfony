@@ -37,7 +37,8 @@
         "symfony/asset": "^7|^8",
         "symfony/form": "^7|^8",
         "symfony/security-bundle": "^7|^8",
-        "symfony/ux-icons": "^2"
+        "symfony/ux-icons": "^2",
+        "carthage-software/mago": "^1.59"
     },
     "scripts": {
         "test": "php vendor/bin/pest",

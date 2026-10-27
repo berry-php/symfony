@@ -28,6 +28,12 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
+      - name: Check Mago formatting
+        run: ./vendor/bin/mago format --check
+
+      - name: Run Mago lint
+        run: ./vendor/bin/mago lint
+
       - name: Run PHPStan
         run: ./vendor/bin/phpstan analyse
 

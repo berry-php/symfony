@@ -1,8 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony\Twig;
 
 use Berry\Symfony\View\AbstractComponent;
+use Berry\Symfony\Twig\Node\TwigViewFunctionExpression;
 use LogicException;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
@@ -19,7 +22,8 @@ final class TwigViewExtension extends AbstractExtension
     public function __construct(
         private readonly array $views = [],
         private readonly ?ContainerInterface $services = null,
-    ) {}
+    ) {
+    }
 
     /**
      * @return TwigFunction[]
@@ -32,7 +36,7 @@ final class TwigViewExtension extends AbstractExtension
             $functions[] = new TwigFunction(
                 $name,
                 fn(mixed ...$arguments): string => $this->render($componentClass, $arguments),
-                ['is_safe' => ['html']],
+                ['is_safe' => ['html'], 'is_variadic' => true, 'node_class' => TwigViewFunctionExpression::class],
             );
         }
 
@@ -57,18 +61,30 @@ final class TwigViewExtension extends AbstractExtension
     {
         $constructor = (new ReflectionClass($componentClass))->getConstructor();
 
-        if ($constructor === null) {
-            return [];
-        }
-
         $position = 0;
         $constructorArguments = [];
 
-        foreach ($constructor->getParameters() as $parameter) {
+        foreach ($constructor?->getParameters() ?? [] as $parameter) {
             $service = $this->serviceArgument($parameter);
 
             if ($service !== null) {
                 $constructorArguments[] = $service;
+                continue;
+            }
+
+            $name = $parameter->getName();
+
+            if (array_key_exists($name, $arguments)) {
+                if (array_key_exists($position, $arguments)) {
+                    throw new LogicException(sprintf(
+                        'Argument "$%s" is defined twice when rendering Twig view "%s".',
+                        $name,
+                        $componentClass,
+                    ));
+                }
+
+                $constructorArguments[] = $arguments[$name];
+                unset($arguments[$name]);
                 continue;
             }
 
@@ -82,12 +98,29 @@ final class TwigViewExtension extends AbstractExtension
                 continue;
             }
 
-            if ($parameter->allowsNull()) {
+            if ($parameter->getType()?->allowsNull() ?? true) {
                 $constructorArguments[] = null;
                 continue;
             }
 
-            throw new LogicException(sprintf('Missing argument "$%s" when rendering Twig view "%s".', $parameter->getName(), $componentClass));
+            throw new LogicException(sprintf(
+                'Missing argument "$%s" when rendering Twig view "%s".',
+                $name,
+                $componentClass,
+            ));
+        }
+
+        // Preserve the existing behavior of ignoring unused positional arguments.
+        foreach (array_keys($arguments) as $argumentName) {
+            if (is_int($argumentName)) {
+                continue;
+            }
+
+            throw new LogicException(sprintf(
+                'Unknown argument "%s" when rendering Twig view "%s".',
+                $argumentName,
+                $componentClass,
+            ));
         }
 
         return $constructorArguments;
@@ -110,7 +143,10 @@ final class TwigViewExtension extends AbstractExtension
         $service = $this->services->get($typeName);
 
         if (!is_object($service)) {
-            throw new LogicException(sprintf('Service "%s" used when rendering Twig views must be an object.', $typeName));
+            throw new LogicException(sprintf(
+                'Service "%s" used when rendering Twig views must be an object.',
+                $typeName,
+            ));
         }
 
         return $service;

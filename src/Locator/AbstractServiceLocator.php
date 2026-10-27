@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony\Locator;
 
@@ -23,7 +25,7 @@ abstract class AbstractServiceLocator implements ServiceSubscriberInterface
     public static function getSubscribedServices(): array
     {
         return array_column(
-            array_map(fn(string $class) => ['key' => $class, 'value' => '?' . $class], static::services()),
+            array_map(static fn(string $class) => ['key' => $class, 'value' => '?' . $class], static::services()),
             'value',
             'key',
         );
@@ -35,7 +37,7 @@ abstract class AbstractServiceLocator implements ServiceSubscriberInterface
             throw new LogicException(sprintf(
                 'The service "%s" is not available. Try running "composer require %s".',
                 $id,
-                $packageName
+                $packageName,
             ));
         }
 

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony\DependencyInjection\Compiler;
 
@@ -33,14 +35,24 @@ final class AsTwigViewPass implements CompilerPassInterface
             $class = $definition->getClass() ?? $id;
 
             if (!is_a($class, AbstractComponent::class, true)) {
-                throw new LogicException(sprintf('Class "%s" used with #[%s] must extend %s.', $class, AsTwigView::class, AbstractComponent::class));
+                throw new LogicException(sprintf(
+                    'Class "%s" used with #[%s] must extend %s.',
+                    $class,
+                    AsTwigView::class,
+                    AbstractComponent::class,
+                ));
             }
 
             foreach ($tags as $tag) {
                 $name = $this->tagName($tag, $class);
 
                 if (isset($views[$name]) && $views[$name] !== $class) {
-                    throw new LogicException(sprintf('Twig view "%s" is already registered for class "%s" and cannot also be registered for class "%s".', $name, $views[$name], $class));
+                    throw new LogicException(sprintf(
+                        'Twig view "%s" is already registered for class "%s" and cannot also be registered for class "%s".',
+                        $name,
+                        $views[$name],
+                        $class,
+                    ));
                 }
 
                 $views[$name] = $class;
@@ -55,7 +67,11 @@ final class AsTwigViewPass implements CompilerPassInterface
     private function tagName(mixed $tag, string $class): string
     {
         if (!is_array($tag) || !isset($tag['name']) || !is_string($tag['name']) || $tag['name'] === '') {
-            throw new LogicException(sprintf('Class "%s" used with #[%s] must define a non-empty name.', $class, AsTwigView::class));
+            throw new LogicException(sprintf(
+                'Class "%s" used with #[%s] must define a non-empty name.',
+                $class,
+                AsTwigView::class,
+            ));
         }
 
         return $tag['name'];

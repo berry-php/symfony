@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony\Locator\Trait;
 
@@ -14,6 +16,11 @@ trait WithTranslatorLocator
      */
     protected function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
     {
-        return ($this->translatorLocator ?? ComponentServiceLocator::getTranslator())->trans($id, $parameters, $domain, $locale);
+        return ($this->translatorLocator ?? ComponentServiceLocator::getTranslator())->trans(
+            $id,
+            $parameters,
+            $domain,
+            $locale,
+        );
     }
 }

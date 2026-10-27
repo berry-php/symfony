@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony\Form;
 
@@ -20,10 +22,7 @@ final class FormElementRegistry
     {
         $this->elements = iterator_to_array($elements);
 
-        usort(
-            $this->elements,
-            static fn($a, $b): int => $b->priority() <=> $a->priority(),
-        );
+        usort($this->elements, static fn($a, $b): int => $b->priority() <=> $a->priority());
     }
 
     public function resolve(FormView $view): ?FormElementInterface

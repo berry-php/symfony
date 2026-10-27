@@ -7,6 +7,8 @@ use Berry\Symfony\Twig\TwigViewExtension;
 use Berry\Symfony\View\AbstractComponent;
 use Berry\Symfony\View\Attribute\AsTwigView;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Twig\Environment;
+use Twig\Loader\ArrayLoader;
 
 use function Berry\Html\div;
 
@@ -133,6 +135,11 @@ test('AsTwigView attribute supports constructor services and Twig arguments', fu
 
     expect($function->getName())->toBe('with_dependency');
     expect($callable('Peter'))->toBe('<div>dependency:Peter</div>');
+
+    $twig = new Environment(new ArrayLoader(['template' => '{{ with_dependency(name: "Peter") }}']));
+    $twig->addExtension($extension);
+
+    expect($twig->render('template'))->toBe('<div>dependency:Peter</div>');
 });
 
 test('AsTwigViewPass rejects duplicate Twig view names', function () {

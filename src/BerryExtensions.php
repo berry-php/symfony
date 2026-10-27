@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony;
 
@@ -27,15 +29,30 @@ final class BerryExtensions
 
     private static function toResponse(): Closure
     {
-        return function (HtmlTag|HtmlVoidTag $node, int $status = 200, array $headers = []): Response {
-            return new Response($node->toString(), $status, $headers);
-        };
+        return static fn(HtmlTag|HtmlVoidTag $node, int $status = 200, array $headers = []): Response => new Response(
+            $node->toString(),
+            $status,
+            $headers,
+        );
     }
 
     private static function trans(): Closure
     {
-        return function (HtmlTag $node, string $id, array $parameters = [], ?string $domain = null, ?string $locale = null, ?TranslatorInterface $translator = null, ?bool $escape = true): HtmlTag {
-            $text = ($translator ?? ComponentServiceLocator::getTranslator())->trans($id, $parameters, $domain, $locale);
+        return static function (
+            HtmlTag $node,
+            string $id,
+            array $parameters = [],
+            ?string $domain = null,
+            ?string $locale = null,
+            ?TranslatorInterface $translator = null,
+            ?bool $escape = true,
+        ): HtmlTag {
+            $text = ($translator ?? ComponentServiceLocator::getTranslator())->trans(
+                $id,
+                $parameters,
+                $domain,
+                $locale,
+            );
 
             if (!$escape) {
                 return $node->unsafeRaw($text);
@@ -47,7 +64,7 @@ final class BerryExtensions
 
     private static function dump(): Closure
     {
-        return function (HtmlTag $node, mixed ...$vars): HtmlTag {
+        return static function (HtmlTag $node, mixed ...$vars): HtmlTag {
             $dumper = new HtmlDumper();
             $cloner = new VarCloner();
 

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony\Form\Elements;
 
@@ -23,7 +25,10 @@ final class RadioFormElement extends AbstractFormElement
         return input()
             ->type(InputType::Radio)
             ->map(fn($input) => $this->applyWidgetAttributes($input, $view, $vars))
-            ->mapWhen(array_key_exists('value', $vars), fn($input) => $input->value($this->arrayGetString($vars, 'value')))
+            ->mapWhen(array_key_exists('value', $vars), fn($input) => $input->value($this->arrayGetString(
+                $vars,
+                'value',
+            )))
             ->checked($this->arrayGetBool($vars, 'checked'));
     }
 }

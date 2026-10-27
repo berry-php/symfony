@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony\Locator\Trait;
 
@@ -11,6 +13,9 @@ trait WithAssetLocator
 
     protected function asset(string $path, ?string $packageName = null): string
     {
-        return ($this->assetPackagesLocator ?? ComponentServiceLocator::getAssetPackages())->getUrl($path, $packageName);
+        return ($this->assetPackagesLocator ?? ComponentServiceLocator::getAssetPackages())->getUrl(
+            $path,
+            $packageName,
+        );
     }
 }

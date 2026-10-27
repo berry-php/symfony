@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony\UX;
 
@@ -12,7 +14,8 @@ final class IconFactory implements IconFactoryInterface
 {
     public function __construct(
         private IconRendererInterface $iconRenderer,
-    ) {}
+    ) {
+    }
 
     /**
      * @param array<string, string|bool> $attributes an array of HTML attributes
@@ -21,8 +24,6 @@ final class IconFactory implements IconFactoryInterface
      */
     public function render(string $name, array $attributes = []): Element
     {
-        return unsafeRawText(
-            $this->iconRenderer->renderIcon($name, $attributes)
-        );
+        return unsafeRawText($this->iconRenderer->renderIcon($name, $attributes));
     }
 }

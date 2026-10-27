@@ -171,7 +171,7 @@ You can then render it from Twig:
 
 ```twig
 {{ hello() }}
-{{ hello('Christopher') }}
+{{ hello(name: 'Christopher') }}
 ```
 
 ## License

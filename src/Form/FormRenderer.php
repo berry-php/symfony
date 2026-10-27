@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony\Form;
 
@@ -56,11 +58,11 @@ final class FormRenderer implements FormRendererInterface
 
         $formElem = form()
             ->method($browserMethod)
-            ->mapWhen($name !== '', fn($form) => $form->name($name))
-            ->mapWhen($action !== '', fn($form) => $form->action($action))
+            ->mapWhen($name !== '', static fn($form) => $form->name($name))
+            ->mapWhen($action !== '', static fn($form) => $form->action($action))
             ->map(fn($form) => $this->applyElementAttributes($form, $vars['attr'] ?? []))
-            ->mapWhen($isMultipart, fn($form) => $form->enctype('multipart/form-data'))
-            ->childWhen($browserMethod !== $method, fn() => input()
+            ->mapWhen($isMultipart, static fn($form) => $form->enctype('multipart/form-data'))
+            ->childWhen($browserMethod !== $method, static fn() => input()
                 ->type(InputType::Hidden)
                 ->name('_method')
                 ->value($method));
@@ -136,7 +138,9 @@ final class FormRenderer implements FormRendererInterface
         $input = input()
             ->type($type)
             ->map(fn($input) => $this->applyWidgetAttributes($input, $view, $vars))
-            ->mapWhen(!$this->isEmpty($vars['value'] ?? null), fn($input) => $input->value($this->strval($vars['value'])));
+            ->mapWhen(!$this->isEmpty($vars['value'] ?? null), fn($input) => $input->value($this->strval(
+                $vars['value'],
+            )));
 
         $view->setRendered();
 
@@ -147,7 +151,7 @@ final class FormRenderer implements FormRendererInterface
     {
         $vars = $this->vars($view, $variables);
 
-        $resolvedLabel = $label ?? ($vars['label'] ?? null);
+        $resolvedLabel = $label ?? $vars['label'] ?? null;
 
         if ($resolvedLabel === false) {
             return null;
@@ -160,20 +164,16 @@ final class FormRenderer implements FormRendererInterface
 
         if ($isCompound) {
             return legend()
-                ->mapWhen($this->arrayGetBool($vars, 'required'), fn($label) => $label->class('required'))
+                ->mapWhen($this->arrayGetBool($vars, 'required'), static fn($label) => $label->class('required'))
                 ->map(fn($label) => $this->applyElementAttributes($label, $vars['label_attr'] ?? []))
-                ->child($isHtmlText
-                    ? unsafeRawText($labelText)
-                    : text($labelText));
+                ->child($isHtmlText ? unsafeRawText($labelText) : text($labelText));
         }
 
         return label()
-            ->mapWhen(($this->arrayGetString($vars, 'id')) !== '', fn($label) => $label->for($this->viewId($vars)))
-            ->mapWhen($this->arrayGetBool($vars, 'required'), fn($label) => $label->class('required'))
+            ->mapWhen($this->arrayGetString($vars, 'id') !== '', fn($label) => $label->for($this->viewId($vars)))
+            ->mapWhen($this->arrayGetBool($vars, 'required'), static fn($label) => $label->class('required'))
             ->map(fn($label) => $this->applyElementAttributes($label, $vars['label_attr'] ?? []))
-            ->child($isHtmlText
-                ? unsafeRawText($labelText)
-                : text($labelText));
+            ->child($isHtmlText ? unsafeRawText($labelText) : text($labelText));
     }
 
     public function formHelp(FormView $view, array $variables = []): ?Element
@@ -194,7 +194,11 @@ final class FormRenderer implements FormRendererInterface
         $helpAttr['id'] = $vars['help_id'] ?? $this->helpId($this->viewId($vars));
 
         $isHtmlText = $this->arrayGetBool($vars, 'help_html');
-        $helpText = $this->trans($help, $this->transParams($vars, 'help_translation_parameters'), $this->transDomain($vars));
+        $helpText = $this->trans(
+            $help,
+            $this->transParams($vars, 'help_translation_parameters'),
+            $this->transDomain($vars),
+        );
 
         return div()
             ->class('help-text')
@@ -215,7 +219,7 @@ final class FormRenderer implements FormRendererInterface
         return ul()
             ->id($this->errorId($id))
             ->children(array_map(
-                fn(FormError $err): Element => li()->text($err->getMessage()),
+                static fn(FormError $err): Element => li()->text($err->getMessage()),
                 $errors,
                 array_keys($errors),
             ));

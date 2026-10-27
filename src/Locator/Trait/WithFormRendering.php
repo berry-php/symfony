@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony\Locator\Trait;
 
@@ -18,7 +20,10 @@ trait WithFormRendering
      */
     protected function renderForm(FormView $view, array $variables = []): Element
     {
-        return ($this->formRendererLocator ?? ComponentServiceLocator::getFormRenderer())->renderForm($view, $variables);
+        return ($this->formRendererLocator ?? ComponentServiceLocator::getFormRenderer())->renderForm(
+            $view,
+            $variables,
+        );
     }
 
     /**
@@ -45,7 +50,10 @@ trait WithFormRendering
      */
     protected function formWidget(FormView $view, array $variables = []): ?Element
     {
-        return ($this->formRendererLocator ?? ComponentServiceLocator::getFormRenderer())->formWidget($view, $variables);
+        return ($this->formRendererLocator ?? ComponentServiceLocator::getFormRenderer())->formWidget(
+            $view,
+            $variables,
+        );
     }
 
     /**
@@ -54,7 +62,11 @@ trait WithFormRendering
      */
     protected function formLabel(FormView $view, ?string $label = null, array $variables = []): ?Element
     {
-        return ($this->formRendererLocator ?? ComponentServiceLocator::getFormRenderer())->formLabel($view, $label, $variables);
+        return ($this->formRendererLocator ?? ComponentServiceLocator::getFormRenderer())->formLabel(
+            $view,
+            $label,
+            $variables,
+        );
     }
 
     /**
@@ -72,7 +84,10 @@ trait WithFormRendering
      */
     protected function formErrors(FormView $view, array $variables = []): ?Element
     {
-        return ($this->formRendererLocator ?? ComponentServiceLocator::getFormRenderer())->formErrors($view, $variables);
+        return ($this->formRendererLocator ?? ComponentServiceLocator::getFormRenderer())->formErrors(
+            $view,
+            $variables,
+        );
     }
 
     /**

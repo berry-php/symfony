@@ -1,8 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony\Form\Elements;
 
-use Berry\Symfony\Form\Elements\AbstractFormElement;
+
 use Berry\Symfony\Form\FormRendererInterface;
 use Berry\Element;
 use Symfony\Component\Form\FormView;

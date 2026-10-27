@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony\Form\Elements;
 
@@ -37,8 +39,6 @@ final class ButtonFormElement extends AbstractFormElement
             ->type($type)
             ->map(fn($btn) => $this->applyWidgetAttributes($btn, $view, $vars))
             ->mapWhen(!$this->isEmpty($vars['value'] ?? null), fn($btn) => $btn->value($this->strval($vars['value'])))
-            ->child($this->arrayGetBool($vars, 'label_html')
-                ? unsafeRawText($label)
-                : text($label));
+            ->child($this->arrayGetBool($vars, 'label_html') ? unsafeRawText($label) : text($label));
     }
 }
