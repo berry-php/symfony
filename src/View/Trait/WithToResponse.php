@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 trait WithToResponse
 {
+    abstract public function toString(): string;
+
     /**
      * Tranform into Symfony Response
      *

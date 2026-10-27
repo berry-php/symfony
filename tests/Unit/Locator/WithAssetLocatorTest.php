@@ -1,8 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Locator;
 
 use Berry\Symfony\Locator\Trait\WithAssetLocator;
+use Override;
 use Symfony\Component\Asset\Packages;
 
 class WithAssetLocatorImplementation
@@ -22,6 +25,7 @@ class WithAssetLocatorImplementation
 
 test('asset uses injected locator', function () {
     $stub = new class extends Packages {
+        #[Override]
         public function getUrl(string $path, ?string $packageName = null): string
         {
             return sprintf('/assets/%s/%s', $packageName ?? 'default', $path);

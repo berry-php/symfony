@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Berry\Symfony\DependencyInjection\Compiler;
 
 use Berry\Symfony\Twig\TwigViewExtension;
+use Override;
 use Berry\Symfony\View\AbstractComponent;
 use Berry\Symfony\View\Attribute\AsTwigView;
 use LogicException;
@@ -20,6 +21,7 @@ final class AsTwigViewPass implements CompilerPassInterface
 {
     public const TAG = 'berry.twig_view';
 
+    #[Override]
     public function process(ContainerBuilder $container): void
     {
         if (!$container->hasDefinition(TwigViewExtension::class)) {
@@ -43,6 +45,7 @@ final class AsTwigViewPass implements CompilerPassInterface
                 ));
             }
 
+            /** @var mixed $tag */
             foreach ($tags as $tag) {
                 $name = $this->tagName($tag, $class);
 

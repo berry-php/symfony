@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Berry\Symfony\Form\Elements;
 
 use Berry\Html\Elements\Option;
+use Override;
 use Berry\Symfony\Form\FormRendererInterface;
 use Berry\Element;
 use Symfony\Component\Form\ChoiceList\View\ChoiceGroupView;
@@ -17,6 +18,7 @@ use function Berry\Html\select;
 
 final class ChoiceFormElement extends AbstractFormElement
 {
+    #[Override]
     public function supports(FormView $view): bool
     {
         return (
@@ -25,6 +27,7 @@ final class ChoiceFormElement extends AbstractFormElement
         );
     }
 
+    #[Override]
     public function render(FormView $view, FormRendererInterface $formRenderer, array $variables = []): Element
     {
         $vars = $this->vars($view, $variables);
@@ -36,6 +39,7 @@ final class ChoiceFormElement extends AbstractFormElement
             $choices = $this->removeChoiceValues($choices, $this->choiceValues($preferredChoices));
         }
 
+        /** @var mixed $placeholder */
         $placeholder = $vars['placeholder'] ?? null;
 
         return select()
@@ -82,6 +86,7 @@ final class ChoiceFormElement extends AbstractFormElement
             return [];
         }
 
+        /** @var array<int|string, ChoiceGroupView|ChoiceView> */
         return array_filter(
             $choices,
             static fn(mixed $choice): bool => $choice instanceof ChoiceView || $choice instanceof ChoiceGroupView,
@@ -129,18 +134,21 @@ final class ChoiceFormElement extends AbstractFormElement
      */
     private function isSelected(array $vars, string $choiceValue): bool
     {
+        /** @var mixed $isSelected */
         $isSelected = $vars['is_selected'] ?? null;
 
         if (is_callable($isSelected)) {
+            /** @var mixed $value */
             $value = $vars['value'] ?? ($this->arrayGetBool($vars, 'multiple') ? [] : '');
 
             if ($this->arrayGetBool($vars, 'multiple') && !is_array($value)) {
                 $value = [];
             }
 
-            return (bool) $isSelected($choiceValue, $value);
+            return boolval($isSelected($choiceValue, $value));
         }
 
+        /** @var mixed $value */
         $value = $vars['value'] ?? null;
 
         if (is_array($value)) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Berry\Symfony\Form\Elements;
 
 use Berry\Html\Enums\InputType;
+use Override;
 use Berry\Symfony\Form\FormRendererInterface;
 use Berry\Element;
 use Symfony\Component\Form\FormView;
@@ -13,11 +14,13 @@ use function Berry\Html\input;
 
 final class RadioFormElement extends AbstractFormElement
 {
+    #[Override]
     public function supports(FormView $view): bool
     {
         return $this->hasBlockPrefix($view, 'radio');
     }
 
+    #[Override]
     public function render(FormView $view, FormRendererInterface $formRenderer, array $variables = []): Element
     {
         $vars = $this->vars($view, $variables);

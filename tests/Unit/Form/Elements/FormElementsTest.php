@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use Berry\Symfony\Form\Elements\ButtonFormElement;
 use Berry\Symfony\Form\Elements\CheckboxFormElement;
@@ -19,17 +21,21 @@ test('ButtonFormElement chooses default types and preserves explicit value and h
     $element = new ButtonFormElement();
     $renderer = FormTestSupport::dummyRenderer();
 
-    $submitHtml = $element->render(FormTestSupport::field('save_changes', [
-        'block_prefixes' => ['form', 'submit'],
-        'value' => 'save',
-    ]), $renderer)->toString();
+    $submitHtml = $element
+        ->render(FormTestSupport::field('save_changes', [
+            'block_prefixes' => ['form', 'submit'],
+            'value' => 'save',
+        ]), $renderer)
+        ->toString();
 
-    $customHtml = $element->render(FormTestSupport::field('preview', [
-        'block_prefixes' => ['form', 'button'],
-        'type' => 'menu',
-        'label' => '<strong>Preview</strong>',
-        'label_html' => true,
-    ]), $renderer)->toString();
+    $customHtml = $element
+        ->render(FormTestSupport::field('preview', [
+            'block_prefixes' => ['form', 'button'],
+            'type' => 'menu',
+            'label' => '<strong>Preview</strong>',
+            'label_html' => true,
+        ]), $renderer)
+        ->toString();
 
     expect($submitHtml)
         ->toContain('type="submit"')
@@ -44,16 +50,21 @@ test('ButtonFormElement chooses default types and preserves explicit value and h
 test('CheckboxFormElement renders checkbox attributes and shared aria metadata', function () {
     $element = new CheckboxFormElement();
 
-    expect($element->supports(FormTestSupport::field('accept', ['block_prefixes' => ['form', 'checkbox']])))->toBeTrue();
+    expect($element->supports(FormTestSupport::field('accept', ['block_prefixes' => [
+        'form',
+        'checkbox',
+    ]])))->toBeTrue();
     expect($element->supports(FormTestSupport::field('accept')))->toBeFalse();
 
-    $html = $element->render(FormTestSupport::field('accept', [
-        'block_prefixes' => ['form', 'checkbox'],
-        'value' => 'yes',
-        'checked' => true,
-        'help' => 'terms.help',
-        'errors' => FormTestSupport::errors('Required'),
-    ]), FormTestSupport::dummyRenderer())->toString();
+    $html = $element
+        ->render(FormTestSupport::field('accept', [
+            'block_prefixes' => ['form', 'checkbox'],
+            'value' => 'yes',
+            'checked' => true,
+            'help' => 'terms.help',
+            'errors' => FormTestSupport::errors('Required'),
+        ]), FormTestSupport::dummyRenderer())
+        ->toString();
 
     expect($html)
         ->toContain('type="checkbox"')
@@ -69,13 +80,15 @@ test('RadioFormElement renders radio attributes and shared aria metadata', funct
     expect($element->supports(FormTestSupport::field('choice', ['block_prefixes' => ['form', 'radio']])))->toBeTrue();
     expect($element->supports(FormTestSupport::field('choice')))->toBeFalse();
 
-    $html = $element->render(FormTestSupport::field('choice', [
-        'block_prefixes' => ['form', 'radio'],
-        'value' => 'a',
-        'checked' => true,
-        'help' => 'choice.help',
-        'errors' => FormTestSupport::errors('Pick one'),
-    ]), FormTestSupport::dummyRenderer())->toString();
+    $html = $element
+        ->render(FormTestSupport::field('choice', [
+            'block_prefixes' => ['form', 'radio'],
+            'value' => 'a',
+            'checked' => true,
+            'help' => 'choice.help',
+            'errors' => FormTestSupport::errors('Pick one'),
+        ]), FormTestSupport::dummyRenderer())
+        ->toString();
 
     expect($html)
         ->toContain('type="radio"')
@@ -91,12 +104,14 @@ test('TextAreaFormElement renders text and shared widget attributes', function (
     expect($element->supports(FormTestSupport::field('body', ['block_prefixes' => ['form', 'textarea']])))->toBeTrue();
     expect($element->supports(FormTestSupport::field('body')))->toBeFalse();
 
-    $html = $element->render(FormTestSupport::field('body', [
-        'block_prefixes' => ['form', 'textarea'],
-        'value' => 'Long text',
-        'help' => 'body.help',
-        'errors' => FormTestSupport::errors('Too short'),
-    ]), FormTestSupport::dummyRenderer())->toString();
+    $html = $element
+        ->render(FormTestSupport::field('body', [
+            'block_prefixes' => ['form', 'textarea'],
+            'value' => 'Long text',
+            'help' => 'body.help',
+            'errors' => FormTestSupport::errors('Too short'),
+        ]), FormTestSupport::dummyRenderer())
+        ->toString();
 
     expect($html)
         ->toContain('<textarea')

@@ -18,6 +18,7 @@ use Berry\Symfony\Twig\TwigViewExtension;
 use Berry\Symfony\UX\IconFactory;
 use Berry\Symfony\UX\IconFactoryInterface;
 use Berry\Symfony\View\Attribute\AsTwigView;
+use Override;
 use ReflectionClass;
 use ReflectionNamedType;
 use Reflector;
@@ -32,6 +33,7 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_it
 
 class BerryBundle extends AbstractBundle
 {
+    #[Override]
     public function build(ContainerBuilder $container): void
     {
         parent::build($container);
@@ -52,11 +54,12 @@ class BerryBundle extends AbstractBundle
     }
 
     /**
-     * @param array<string, string> $config
+     * @param array<array-key, mixed> $config
      */
-    public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
+    #[Override]
+    public function loadExtension(array $config, ContainerConfigurator $configurator, ContainerBuilder $container): void
     {
-        $services = $container->services()->defaults()->autowire()->autoconfigure();
+        $services = $configurator->services()->defaults()->autowire()->autoconfigure();
 
         $services
             ->set(ComponentServiceLocator::class)
@@ -69,7 +72,8 @@ class BerryBundle extends AbstractBundle
                 ->tag('twig.extension');
         }
 
-        $enabledBundles = $builder->getParameter('kernel.bundles');
+        $enabledBundles = $container->getParameter('kernel.bundles');
+        assert(is_array($enabledBundles));
 
         if (isset($enabledBundles['UXIconsBundle'])) {
             $services->set(IconFactory::class);
@@ -98,6 +102,7 @@ class BerryBundle extends AbstractBundle
         }
     }
 
+    #[Override]
     public function boot(): void
     {
         if ($this->container?->has(ComponentServiceLocator::class)) {

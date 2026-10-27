@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Berry\Symfony\UX;
 
 use Berry\Element;
+use Override;
 use Symfony\UX\Icons\Exception\IconNotFoundException;
 use Symfony\UX\Icons\IconRendererInterface;
 
@@ -22,6 +23,7 @@ final class IconFactory implements IconFactoryInterface
      *
      * @throws IconNotFoundException
      */
+    #[Override]
     public function render(string $name, array $attributes = []): Element
     {
         return unsafeRawText($this->iconRenderer->renderIcon($name, $attributes));

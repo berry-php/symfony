@@ -7,6 +7,7 @@ namespace Berry\Symfony\Twig;
 use Berry\Symfony\View\AbstractComponent;
 use Berry\Symfony\Twig\Node\TwigViewFunctionExpression;
 use LogicException;
+use Override;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionNamedType;
@@ -28,6 +29,7 @@ final class TwigViewExtension extends AbstractExtension
     /**
      * @return TwigFunction[]
      */
+    #[Override]
     public function getFunctions(): array
     {
         $functions = [];
@@ -49,6 +51,8 @@ final class TwigViewExtension extends AbstractExtension
      */
     private function render(string $componentClass, array $arguments): string
     {
+        // Components intentionally have different constructors; their arguments are resolved below.
+        // @mago-expect analysis:too-many-arguments,analysis:unsafe-instantiation
         return (new $componentClass(...$this->constructorArguments($componentClass, $arguments)))->toString();
     }
 
@@ -140,6 +144,7 @@ final class TwigViewExtension extends AbstractExtension
             return null;
         }
 
+        /** @var mixed $service */
         $service = $this->services->get($typeName);
 
         if (!is_object($service)) {

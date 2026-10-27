@@ -1,8 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Locator;
 
 use Berry\Symfony\Locator\Trait\WithIsGrantedLocator;
+use Override;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class WithIsGrantedLocatorImplementation
@@ -22,8 +25,12 @@ class WithIsGrantedLocatorImplementation
 
 test('isGranted uses injected locator', function () {
     $stub = new class implements AuthorizationCheckerInterface {
-        public function isGranted(mixed $attribute, mixed $subject = null, ?\Symfony\Component\Security\Core\Authorization\AccessDecision $accessDecision = null): bool
-        {
+        #[Override]
+        public function isGranted(
+            mixed $attribute,
+            mixed $subject = null,
+            ?\Symfony\Component\Security\Core\Authorization\AccessDecision $accessDecision = null,
+        ): bool {
             return true;
         }
     };

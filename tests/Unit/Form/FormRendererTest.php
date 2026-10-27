@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use Berry\Symfony\Form\FormElementInterface;
 use Berry\Symfony\Form\FormRendererInterface;
@@ -67,23 +69,27 @@ test('formStart renders browser and spoofed methods with merged attributes', fun
 test('formRow renders hidden fields directly and button rows without chrome', function () {
     $renderer = FormTestSupport::renderer();
 
-    $hiddenHtml = $renderer->formRow(FormTestSupport::field('token', [
-        'block_prefixes' => ['form', 'hidden'],
-        'value' => 'csrf',
-    ]))?->toString() ?? '';
+    $hiddenHtml = $renderer
+        ->formRow(FormTestSupport::field('token', [
+            'block_prefixes' => ['form', 'hidden'],
+            'value' => 'csrf',
+        ]))
+        ?->toString() ?? '';
 
     expect($hiddenHtml)
         ->toContain('<input type="hidden"');
 
     expect(str_contains($hiddenHtml, '<div'))->toBeFalse();
 
-    $buttonHtml = $renderer->formRow(FormTestSupport::field('save', [
-        'block_prefixes' => ['form', 'submit'],
-        'label' => 'Save',
-        'help' => 'ignored',
-        'errors' => FormTestSupport::errors('ignored'),
-        'row_attr' => ['class' => 'actions'],
-    ]))?->toString() ?? '';
+    $buttonHtml = $renderer
+        ->formRow(FormTestSupport::field('save', [
+            'block_prefixes' => ['form', 'submit'],
+            'label' => 'Save',
+            'help' => 'ignored',
+            'errors' => FormTestSupport::errors('ignored'),
+            'row_attr' => ['class' => 'actions'],
+        ]))
+        ?->toString() ?? '';
 
     expect($buttonHtml)
         ->toContain('<div class="actions">')
@@ -98,13 +104,19 @@ test('formRow renders hidden fields directly and button rows without chrome', fu
 test('formWidget renders simple inputs with translated attrs and aria metadata', function () {
     $translator = new class implements TranslatorInterface {
         /**
-         * @param array<string, mixed> $parameters
+         * @param array<array-key, mixed> $parameters
          */
-        public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
-        {
+        #[Override]
+        public function trans(
+            string $id,
+            array $parameters = [],
+            ?string $domain = null,
+            ?string $locale = null,
+        ): string {
             return 'tr:' . $id;
         }
 
+        #[Override]
         public function getLocale(): string
         {
             return 'en';
@@ -156,13 +168,19 @@ test('formWidget falls back to text for unknown input types', function () {
 test('formWidget renders collapsed choice fields as a select element', function () {
     $translator = new class implements TranslatorInterface {
         /**
-         * @param array<string, mixed> $parameters
+         * @param array<array-key, mixed> $parameters
          */
-        public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
-        {
+        #[Override]
+        public function trans(
+            string $id,
+            array $parameters = [],
+            ?string $domain = null,
+            ?string $locale = null,
+        ): string {
             return 'tr:' . $id;
         }
 
+        #[Override]
         public function getLocale(): string
         {
             return 'en';
@@ -227,13 +245,19 @@ test('formWidget renders compound roots with root errors children and rest', fun
 test('formWidget keeps compound container attrs and renders collection prototypes', function () {
     $translator = new class implements TranslatorInterface {
         /**
-         * @param array<string, mixed> $parameters
+         * @param array<array-key, mixed> $parameters
          */
-        public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
-        {
+        #[Override]
+        public function trans(
+            string $id,
+            array $parameters = [],
+            ?string $domain = null,
+            ?string $locale = null,
+        ): string {
             return 'tr:' . $id;
         }
 
+        #[Override]
         public function getLocale(): string
         {
             return 'en';
@@ -247,14 +271,16 @@ test('formWidget keeps compound container attrs and renders collection prototype
         'label' => 'Item',
     ]);
 
-    $html = $renderer->formWidget(FormTestSupport::view([
-        'id' => 'items',
-        'name' => 'items',
-        'full_name' => 'items',
-        'compound' => true,
-        'attr' => ['class' => 'grid', 'title' => 'items.title'],
-        'prototype' => $prototype,
-    ]))?->toString() ?? '';
+    $html = $renderer
+        ->formWidget(FormTestSupport::view([
+            'id' => 'items',
+            'name' => 'items',
+            'full_name' => 'items',
+            'compound' => true,
+            'attr' => ['class' => 'grid', 'title' => 'items.title'],
+            'prototype' => $prototype,
+        ]))
+        ?->toString() ?? '';
 
     expect($html)
         ->toContain('<div id="items"')
@@ -313,13 +339,19 @@ test('formLabel handles false label formats required classes and html labels', f
 test('formHelp returns null for empty values and renders explicit help ids', function () {
     $translator = new class implements TranslatorInterface {
         /**
-         * @param array<string, mixed> $parameters
+         * @param array<array-key, mixed> $parameters
          */
-        public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
-        {
+        #[Override]
+        public function trans(
+            string $id,
+            array $parameters = [],
+            ?string $domain = null,
+            ?string $locale = null,
+        ): string {
             return 'tr:' . $id;
         }
 
+        #[Override]
         public function getLocale(): string
         {
             return 'en';
@@ -330,13 +362,15 @@ test('formHelp returns null for empty values and renders explicit help ids', fun
 
     expect($renderer->formHelp(FormTestSupport::field('body')))->toBeNull();
 
-    $html = $renderer->formHelp(FormTestSupport::field('body', [
-        'id' => 'post_body',
-        'help' => 'help.body',
-        'help_html' => true,
-        'help_id' => 'custom_help',
-        'help_attr' => ['class' => 'muted'],
-    ]))?->toString() ?? '';
+    $html = $renderer
+        ->formHelp(FormTestSupport::field('body', [
+            'id' => 'post_body',
+            'help' => 'help.body',
+            'help_html' => true,
+            'help_id' => 'custom_help',
+            'help_attr' => ['class' => 'muted'],
+        ]))
+        ?->toString() ?? '';
 
     expect($html)
         ->toContain('class="help-text muted"')
@@ -357,16 +391,18 @@ test('formErrors renders only form errors and formRest renders only unrendered c
     $done = FormTestSupport::field('done');
     $done->setRendered();
 
-    $rest = $renderer->formRest(FormTestSupport::view([
-        'id' => 'post',
-        'name' => 'post',
-        'full_name' => 'post',
-        'compound' => true,
-        'method' => 'PATCH',
-    ], [
-        'title' => $title,
-        'done' => $done,
-    ]))->toString();
+    $rest = $renderer
+        ->formRest(FormTestSupport::view([
+            'id' => 'post',
+            'name' => 'post',
+            'full_name' => 'post',
+            'compound' => true,
+            'method' => 'PATCH',
+        ], [
+            'title' => $title,
+            'done' => $done,
+        ]))
+        ->toString();
 
     expect($rest)
         ->toContain('name="title"')
@@ -381,20 +417,24 @@ test('formWidget delegates to resolved form elements and marks the view rendered
     $element = new class implements FormElementInterface {
         public ?FormRendererInterface $renderer = null;
 
+        #[Override]
         public function priority(): int
         {
             return 100;
         }
 
+        #[Override]
         public function supports(FormView $view): bool
         {
             return true;
         }
 
+        #[Override]
         public function render(FormView $view, FormRendererInterface $formRenderer, array $variables = []): Element
         {
             $this->renderer = $formRenderer;
 
+            /** @var mixed $message */
             $message = $variables['message'] ?? '';
             if (!is_string($message)) {
                 $message = '';

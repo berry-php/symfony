@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Berry\Symfony\Locator;
 
 use Psr\Container\ContainerInterface;
+use Override;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use LogicException;
 
@@ -22,6 +23,7 @@ abstract class AbstractServiceLocator implements ServiceSubscriberInterface
      */
     abstract public static function services(): array;
 
+    #[Override]
     public static function getSubscribedServices(): array
     {
         return array_column(

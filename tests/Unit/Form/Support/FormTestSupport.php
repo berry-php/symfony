@@ -1,8 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Berry\Symfony\Test\Unit\Form\Support;
 
 use ArrayIterator;
+use Override;
 use Berry\Element;
 use Berry\Symfony\Form\Elements\ButtonFormElement;
 use Berry\Symfony\Form\Elements\CheckboxFormElement;
@@ -40,9 +43,7 @@ final class FormTestSupport
         $name = is_string($vars['name'] ?? null) ? $vars['name'] : 'field';
         $id = is_string($vars['id'] ?? null) ? $vars['id'] : $name;
         $fullName = is_string($vars['full_name'] ?? null) ? $vars['full_name'] : $name;
-        $blockPrefixes = is_array($vars['block_prefixes'] ?? null)
-            ? $vars['block_prefixes']
-            : ['form', 'text'];
+        $blockPrefixes = is_array($vars['block_prefixes'] ?? null) ? $vars['block_prefixes'] : ['form', 'text'];
 
         $view = new FormView();
         $view->vars = array_replace([
@@ -114,41 +115,49 @@ final class FormTestSupport
     public static function dummyRenderer(): FormRendererInterface
     {
         return new class implements FormRendererInterface {
+            #[Override]
             public function renderForm(FormView $view, array $variables = []): Element
             {
                 throw new LogicException('Unused in this test');
             }
 
+            #[Override]
             public function formStart(FormView $view, array $variables = []): \Berry\Html\Elements\Form
             {
                 throw new LogicException('Unused in this test');
             }
 
+            #[Override]
             public function formRow(FormView $view, array $variables = []): ?Element
             {
                 throw new LogicException('Unused in this test');
             }
 
+            #[Override]
             public function formWidget(FormView $view, array $variables = []): ?Element
             {
                 throw new LogicException('Unused in this test');
             }
 
+            #[Override]
             public function formLabel(FormView $view, ?string $label = null, array $variables = []): ?Element
             {
                 throw new LogicException('Unused in this test');
             }
 
+            #[Override]
             public function formHelp(FormView $view, array $variables = []): ?Element
             {
                 throw new LogicException('Unused in this test');
             }
 
+            #[Override]
             public function formErrors(FormView $view, array $variables = []): ?Element
             {
                 throw new LogicException('Unused in this test');
             }
 
+            #[Override]
             public function formRest(FormView $view, array $variables = []): ?Element
             {
                 throw new LogicException('Unused in this test');

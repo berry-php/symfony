@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Berry\Symfony\Locator;
 
 use Berry\Symfony\Form\FormRendererInterface;
+use Override;
 use Berry\Symfony\UX\IconFactoryInterface;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Routing\RouterInterface;
@@ -16,6 +17,7 @@ use Twig\Environment as TwigEnvironment;
 
 class ComponentServiceLocator extends AbstractServiceLocator
 {
+    #[Override]
     public static function services(): array
     {
         return [

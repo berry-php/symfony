@@ -1,8 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Locator;
 
 use Berry\Symfony\Locator\Trait\WithCreateCsrfTokenLocator;
+use Override;
+use SensitiveParameter;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
@@ -23,11 +27,34 @@ class WithCreateCsrfTokenLocatorImplementation
 
 test('createCsrfToken uses injected locator', function () {
     $stub = new class implements CsrfTokenManagerInterface {
-        public function getToken(string $tokenId): CsrfToken { return new CsrfToken($tokenId, 'value'); }
-        public function refreshToken(string $tokenId): CsrfToken { throw new \LogicException; }
-        public function removeToken(string $tokenId): ?string { return null; }
-        public function tokenExists(string $tokenId): bool { return true; }
-        public function isTokenValid(CsrfToken $token): bool { return true; }
+        #[Override]
+        public function getToken(string $tokenId): CsrfToken
+        {
+            return new CsrfToken($tokenId, 'value');
+        }
+
+        #[Override]
+        public function refreshToken(string $tokenId): CsrfToken
+        {
+            throw new \LogicException();
+        }
+
+        #[Override]
+        public function removeToken(string $tokenId): ?string
+        {
+            return null;
+        }
+
+        public function tokenExists(string $_tokenId): bool
+        {
+            return true;
+        }
+
+        #[Override]
+        public function isTokenValid(#[SensitiveParameter] CsrfToken $token): bool
+        {
+            return true;
+        }
     };
 
     $impl = new WithCreateCsrfTokenLocatorImplementation();

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use Berry\Element;
 use Berry\Symfony\BerryBundle;
@@ -14,6 +16,7 @@ use function Berry\Html\div;
 
 final class AsTwigViewPassTestComponent extends AbstractComponent
 {
+    #[Override]
     public function renderComponent(): Element
     {
         return div();
@@ -22,6 +25,7 @@ final class AsTwigViewPassTestComponent extends AbstractComponent
 
 final class AsTwigViewPassTestDuplicateComponent extends AbstractComponent
 {
+    #[Override]
     public function renderComponent(): Element
     {
         return div();
@@ -39,8 +43,12 @@ final class AsTwigViewPassTestDependency
 #[AsTwigView(name: 'from_attribute')]
 final class AsTwigViewPassTestAttributedComponent extends AbstractComponent
 {
-    public function __construct(private readonly string $name) {}
+    public function __construct(
+        private readonly string $name,
+    ) {
+    }
 
+    #[Override]
     public function renderComponent(): Element
     {
         return div()->text($this->name);
@@ -53,8 +61,10 @@ final class AsTwigViewPassTestAttributedComponentWithDependency extends Abstract
     public function __construct(
         private readonly AsTwigViewPassTestDependency $dependency,
         private readonly string $name,
-    ) {}
+    ) {
+    }
 
+    #[Override]
     public function renderComponent(): Element
     {
         return div()->text($this->dependency->value() . ':' . $this->name);
@@ -114,7 +124,10 @@ test('AsTwigView attribute supports constructor services and Twig arguments', fu
     $container->register(TwigViewExtension::class, TwigViewExtension::class)->setPublic(true);
     $container->register(AsTwigViewPassTestDependency::class, AsTwigViewPassTestDependency::class);
     $container
-        ->register(AsTwigViewPassTestAttributedComponentWithDependency::class, AsTwigViewPassTestAttributedComponentWithDependency::class)
+        ->register(
+            AsTwigViewPassTestAttributedComponentWithDependency::class,
+            AsTwigViewPassTestAttributedComponentWithDependency::class,
+        )
         ->setAutoconfigured(true)
         ->setAutowired(true);
 

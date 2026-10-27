@@ -76,6 +76,7 @@ final class BerryExtensions
                 return $node->unsafeRaw($dumper->dump($cloner->cloneVar($vars[0]), true));
             }
 
+            /** @var mixed $var */
             foreach ($vars as $var) {
                 $node->unsafeRaw($dumper->dump($cloner->cloneVar($var), true));
             }

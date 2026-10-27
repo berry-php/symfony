@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use Berry\Symfony\View\Trait\WithToResponse;
 
@@ -7,9 +9,11 @@ class TestComponentWithToResponse
     use WithToResponse;
 
     public function __construct(
-        private string $content = ''
-    ) {}
+        private string $content = '',
+    ) {
+    }
 
+    #[Override]
     public function toString(): string
     {
         return '<div>' . $this->content . '</div>';

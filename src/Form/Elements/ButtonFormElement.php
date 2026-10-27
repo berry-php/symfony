@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Berry\Symfony\Form\Elements;
 
 use Berry\Html\Enums\ButtonType;
+use Override;
 use Berry\Symfony\Form\FormRendererInterface;
 use Berry\Element;
 use Symfony\Component\Form\FormView;
@@ -15,14 +16,17 @@ use function Berry\unsafeRawText;
 
 final class ButtonFormElement extends AbstractFormElement
 {
+    #[Override]
     public function supports(FormView $view): bool
     {
         return $this->hasBlockPrefix($view, ['button', 'submit', 'reset']);
     }
 
+    #[Override]
     public function render(FormView $view, FormRendererInterface $formRenderer, array $variables = []): Element
     {
         $vars = $this->vars($view, $variables);
+        /** @var mixed $type */
         $type = $vars['type'] ?? null;
 
         if (!is_string($type) || $type === '') {

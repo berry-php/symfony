@@ -1,8 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Locator;
 
 use Berry\Symfony\Locator\Trait\WithTranslatorLocator;
+use Override;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WithTranslatorLocatorImplementation
@@ -17,8 +20,12 @@ class WithTranslatorLocatorImplementation
     /**
      * @param array<string, mixed> $parameters
      */
-    public function testTrans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
-    {
+    public function testTrans(
+        string $id,
+        array $parameters = [],
+        ?string $domain = null,
+        ?string $locale = null,
+    ): string {
         return $this->trans($id, $parameters, $domain, $locale);
     }
 }
@@ -26,13 +33,23 @@ class WithTranslatorLocatorImplementation
 test('trans uses injected locator', function () {
     $stub = new class implements TranslatorInterface {
         /**
-         * @param array<string, mixed> $parameters
+         * @param array<array-key, mixed> $parameters
          */
-        public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
-        {
+        #[Override]
+        public function trans(
+            string $id,
+            array $parameters = [],
+            ?string $domain = null,
+            ?string $locale = null,
+        ): string {
             return 'translated:' . $id;
         }
-        public function getLocale(): string { return 'en'; }
+
+        #[Override]
+        public function getLocale(): string
+        {
+            return 'en';
+        }
     };
 
     $impl = new WithTranslatorLocatorImplementation();

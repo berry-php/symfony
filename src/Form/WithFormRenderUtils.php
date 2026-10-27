@@ -52,7 +52,7 @@ trait WithFormRenderUtils
      */
     protected function arrayGetBool(array $vars, string $key, bool $default = false): bool
     {
-        return (bool) ($vars[$key] ?? $default);
+        return boolval($vars[$key] ?? $default);
     }
 
     protected function humanize(string $text): string
@@ -99,6 +99,7 @@ trait WithFormRenderUtils
 
         $normalized = [];
 
+        /** @var mixed $value */
         foreach ($attributes as $name => $value) {
             if (!is_string($name)) {
                 continue;
@@ -152,12 +153,14 @@ trait WithFormRenderUtils
             $prefixes = [$prefixes];
         }
 
+        /** @var mixed $blockPrefixes */
         $blockPrefixes = $view->vars['block_prefixes'] ?? null;
 
         if (!is_array($blockPrefixes)) {
             return false;
         }
 
+        /** @var mixed $prefix */
         foreach ($blockPrefixes as $prefix) {
             if (!is_string($prefix)) {
                 continue;
@@ -198,6 +201,7 @@ trait WithFormRenderUtils
         /** @var string[] $describedBy */
         $describedBy = [];
 
+        /** @var mixed $help */
         $help = $variables['help'] ?? null;
 
         if ($help !== null && $help !== false) {
@@ -236,6 +240,7 @@ trait WithFormRenderUtils
         /** @var string[] $describedBy */
         $describedBy = [];
 
+        /** @var mixed $help */
         $help = $variables['help'] ?? null;
 
         if ($help !== null && $help !== false) {
@@ -263,15 +268,9 @@ trait WithFormRenderUtils
     {
         $attributes = $this->normalizeAttributes($attributes);
 
-        $domain = $variables['translation_domain'] ?? null;
-        assert(is_string($domain) || $domain === null || $domain === false);
+        $domain = $this->transDomain($variables);
 
-        $attrTransParams = $variables['attr_translation_parameters'] ?? [];
-        if (!is_array($attrTransParams)) {
-            $attrTransParams = [];
-        }
-
-        $transParams = $this->filterArrayStringKeys($attrTransParams);
+        $transParams = $this->transParams($variables, 'attr_translation_parameters');
 
         foreach (['placeholder', 'title'] as $name) {
             if (!array_key_exists($name, $attributes) || $attributes[$name] === null || $attributes[$name] === false) {
@@ -297,7 +296,7 @@ trait WithFormRenderUtils
 
         $text = $this->strval($text);
 
-        if ($domain === false || $this->translator === null) {
+        if ($domain === false || !$this->translator instanceof TranslatorInterface) {
             return $text;
         }
 
@@ -312,6 +311,7 @@ trait WithFormRenderUtils
         $vars = $this->vars($view, $variables);
 
         if ($label === null || $label === '') {
+            /** @var mixed $labelFormat */
             $labelFormat = $vars['label_format'] ?? null;
 
             $label = is_string($labelFormat) && $labelFormat !== ''
@@ -360,7 +360,8 @@ trait WithFormRenderUtils
      */
     protected function filterArrayStringKeys(array $vars): array
     {
-        return array_filter($vars, static fn(mixed $key) => is_string($key), ARRAY_FILTER_USE_KEY);
+        /** @var array<string, mixed> */
+        return array_filter($vars, static fn(mixed $key): bool => is_string($key), ARRAY_FILTER_USE_KEY);
     }
 
     /**
@@ -369,6 +370,7 @@ trait WithFormRenderUtils
      */
     protected function transParams(array $variables, string $key): array
     {
+        /** @var mixed $transParams */
         $transParams = $variables[$key] ?? [];
         if (!is_array($transParams)) {
             return [];
@@ -382,6 +384,7 @@ trait WithFormRenderUtils
      */
     protected function transDomain(array $variables, string $key = 'translation_domain'): string|false|null
     {
+        /** @var mixed $domain */
         $domain = $variables[$key] ?? null;
         assert(is_string($domain) || $domain === null || $domain === false);
         return $domain;
@@ -392,6 +395,7 @@ trait WithFormRenderUtils
      */
     protected function errors(FormView $view): array
     {
+        /** @var mixed $errors */
         $errors = $view->vars['errors'] ?? null;
 
         if (!is_iterable($errors)) {

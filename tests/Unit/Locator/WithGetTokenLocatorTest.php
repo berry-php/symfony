@@ -1,8 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Locator;
 
 use Berry\Symfony\Locator\Trait\WithGetTokenLocator;
+use Override;
+use SensitiveParameter;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -23,36 +27,118 @@ class WithGetTokenLocatorImplementation
 
 test('getToken uses injected locator', function () {
     $token = new class implements TokenInterface {
-        /** @var array<string, mixed> */
+        /** @var array<array-key, mixed> */
         private array $attributes = [];
 
-        public function getRoleNames(): array { return []; }
-        public function getCredentials(): mixed { return null; }
-        public function getUser(): ?\Symfony\Component\Security\Core\User\UserInterface { return null; }
-        public function setUser(\Symfony\Component\Security\Core\User\UserInterface $user): void {}
-        public function isAuthenticated(): bool { return true; }
-        public function setAuthenticated(bool $isAuthenticated): void {}
-        public function eraseCredentials(): void {}
-        /** @return array<string, mixed> */
-        public function getAttributes(): array { return $this->attributes; }
-        /** @param array<string, mixed> $attributes */
-        public function setAttributes(array $attributes): void { $this->attributes = $attributes; }
-        public function hasAttribute(string $name): bool { return isset($this->attributes[$name]); }
-        public function getAttribute(string $name): mixed { return $this->attributes[$name] ?? null; }
+        #[Override]
+        public function getRoleNames(): array
+        {
+            return [];
+        }
+
+        public function getCredentials(): mixed
+        {
+            return null;
+        }
+
+        #[Override]
+        public function getUser(): ?\Symfony\Component\Security\Core\User\UserInterface
+        {
+            return null;
+        }
+
+        #[Override]
+        public function setUser(\Symfony\Component\Security\Core\User\UserInterface $user): void
+        {
+        }
+
+        public function isAuthenticated(): bool
+        {
+            return true;
+        }
+
+        public function setAuthenticated(bool $_isAuthenticated): void
+        {
+        }
+
+        public function eraseCredentials(): void
+        {
+        }
+
+        /** @return array<array-key, mixed> */
+        #[Override]
+        public function getAttributes(): array
+        {
+            return $this->attributes;
+        }
+
+        /** @param array<array-key, mixed> $attributes */
+        #[Override]
+        public function setAttributes(array $attributes): void
+        {
+            $this->attributes = $attributes;
+        }
+
+        #[Override]
+        public function hasAttribute(string $name): bool
+        {
+            return isset($this->attributes[$name]);
+        }
+
+        #[Override]
+        public function getAttribute(string $name): mixed
+        {
+            return $this->attributes[$name] ?? null;
+        }
+
         /** @param mixed $value */
-        public function setAttribute(string $name, $value): void { $this->attributes[$name] = $value; }
-        public function getUserIdentifier(): string { return 'user'; }
-        public function __toString(): string { return 'token'; }
-        /** @return array<string, mixed> */
-        public function __serialize(): array { return $this->attributes; }
-        /** @param array<string, mixed> $data */
-        public function __unserialize(array $data): void { $this->attributes = $data; }
+        #[Override]
+        public function setAttribute(string $name, $value): void
+        {
+            $this->attributes[$name] = $value;
+        }
+
+        #[Override]
+        public function getUserIdentifier(): string
+        {
+            return 'user';
+        }
+
+        #[Override]
+        public function __toString(): string
+        {
+            return 'token';
+        }
+
+        /** @return array<array-key, mixed> */
+        #[Override]
+        public function __serialize(): array
+        {
+            return $this->attributes;
+        }
+
+        /** @param array<array-key, mixed> $data */
+        #[Override]
+        public function __unserialize(array $data): void
+        {
+            $this->attributes = $data;
+        }
     };
 
     $stub = new class implements TokenStorageInterface {
         private ?TokenInterface $token = null;
-        public function setToken(?TokenInterface $token): void { $this->token = $token; }
-        public function getToken(): ?TokenInterface { return $this->token; }
+
+        #[Override]
+        public function setToken(#[SensitiveParameter] ?TokenInterface $token): void
+        {
+            $this->token = $token;
+        }
+
+        #[Override]
+        public function getToken(): ?TokenInterface
+        {
+            return $this->token;
+        }
     };
     $stub->setToken($token);
 

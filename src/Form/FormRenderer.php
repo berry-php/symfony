@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Berry\Symfony\Form;
 
 use Berry\Html\Elements\Div;
+use Override;
 use Berry\Html\Elements\Form;
 use Berry\Html\Enums\InputType;
 use Berry\Element;
@@ -38,6 +39,7 @@ final class FormRenderer implements FormRendererInterface
         $this->translator = $translator;
     }
 
+    #[Override]
     public function renderForm(FormView $view, array $variables = []): Element
     {
         return $this
@@ -45,6 +47,7 @@ final class FormRenderer implements FormRendererInterface
             ->child($this->formWidget($view, $variables));
     }
 
+    #[Override]
     public function formStart(FormView $view, array $variables = []): Form
     {
         $vars = $this->vars($view, $variables);
@@ -71,6 +74,7 @@ final class FormRenderer implements FormRendererInterface
         return $formElem;
     }
 
+    #[Override]
     public function formRow(FormView $view, array $variables = []): ?Element
     {
         $vars = $this->vars($view, $variables);
@@ -102,6 +106,7 @@ final class FormRenderer implements FormRendererInterface
             ->child($this->formHelp($view, $variables));
     }
 
+    #[Override]
     public function formWidget(FormView $view, array $variables = []): ?Element
     {
         $element = $this->formElementRegistry->resolve($view);
@@ -116,6 +121,7 @@ final class FormRenderer implements FormRendererInterface
             $containerVars = $vars;
             $containerVars['attr'] = $this->normalizeAttributes($vars['attr'] ?? []);
 
+            /** @var mixed $prototype */
             $prototype = $vars['prototype'] ?? null;
 
             if ($prototype instanceof FormView && !$prototype->isRendered()) {
@@ -147,10 +153,12 @@ final class FormRenderer implements FormRendererInterface
         return $input;
     }
 
+    #[Override]
     public function formLabel(FormView $view, ?string $label = null, array $variables = []): ?Element
     {
         $vars = $this->vars($view, $variables);
 
+        /** @var mixed $resolvedLabel */
         $resolvedLabel = $label ?? $vars['label'] ?? null;
 
         if ($resolvedLabel === false) {
@@ -176,16 +184,19 @@ final class FormRenderer implements FormRendererInterface
             ->child($isHtmlText ? unsafeRawText($labelText) : text($labelText));
     }
 
+    #[Override]
     public function formHelp(FormView $view, array $variables = []): ?Element
     {
         $vars = $this->vars($view, $variables);
 
+        /** @var mixed $help */
         $help = $vars['help'] ?? null;
 
         if ($help === null || $help === false) {
             return null;
         }
 
+        /** @var mixed $helpAttr */
         $helpAttr = $vars['help_attr'] ?? [];
         if (!is_array($helpAttr)) {
             $helpAttr = [];
@@ -206,6 +217,7 @@ final class FormRenderer implements FormRendererInterface
             ->child($isHtmlText ? unsafeRawText($helpText) : text($helpText));
     }
 
+    #[Override]
     public function formErrors(FormView $view, array $variables = []): ?Element
     {
         $errors = $this->errors($view);
@@ -225,6 +237,7 @@ final class FormRenderer implements FormRendererInterface
             ));
     }
 
+    #[Override]
     public function formRest(FormView $view, array $variables = []): Element
     {
         $vars = $this->vars($view, $variables);

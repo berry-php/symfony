@@ -7,6 +7,7 @@ namespace Berry\Symfony\Form\Elements;
 use Berry\Symfony\Form\FormElementInterface;
 use Berry\Symfony\Form\WithFormRenderUtils;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Override;
 
 abstract class AbstractFormElement implements FormElementInterface
 {
@@ -17,6 +18,7 @@ abstract class AbstractFormElement implements FormElementInterface
         $this->translator = $translator;
     }
 
+    #[Override]
     public function priority(): int
     {
         return 0;

@@ -1,8 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Tests\Unit\Locator;
 
 use Berry\Element;
+use Override;
 use Berry\Symfony\Locator\Trait\WithRenderIconLocator;
 use Berry\Symfony\UX\IconFactoryInterface;
 
@@ -29,11 +32,21 @@ test('renderIcon uses injected locator', function () {
         /**
          * @param array<string, bool|string> $attributes
          */
+        #[Override]
         public function render(string $name, array $attributes = []): Element
         {
             return new class implements Element {
-                public function toString(): string { return '<svg>icon</svg>'; }
-                public function __toString(): string { return $this->toString(); }
+                #[Override]
+                public function toString(): string
+                {
+                    return '<svg>icon</svg>';
+                }
+
+                #[Override]
+                public function __toString(): string
+                {
+                    return $this->toString();
+                }
             };
         }
     };
