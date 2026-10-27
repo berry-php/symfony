@@ -6,12 +6,10 @@ namespace Berry\Symfony\Form;
 
 use Berry\Html\HtmlTag;
 use Berry\Html\HtmlVoidTag;
-
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormView;
 use Symfony\Contracts\Translation\TranslatableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use LogicException;
 use Stringable;
 
@@ -133,11 +131,13 @@ trait WithFormRenderUtils
         $vars = $this->filterArrayStringKeys($view->vars);
 
         foreach (['attr', 'row_attr', 'label_attr', 'help_attr'] as $attributeKey) {
-            if (!(array_key_exists($attributeKey, $variables) && is_array($variables[$attributeKey] ?? null))) { continue; }
+            if (!(array_key_exists($attributeKey, $variables) && is_array($variables[$attributeKey] ?? null))) {
+                continue;
+            }
 
-$base = is_array($vars[$attributeKey] ?? null) ? $vars[$attributeKey] : [];
-                $vars[$attributeKey] = array_replace($base, $variables[$attributeKey]);
-                unset($variables[$attributeKey]);
+            $base = is_array($vars[$attributeKey] ?? null) ? $vars[$attributeKey] : [];
+            $vars[$attributeKey] = array_replace($base, $variables[$attributeKey]);
+            unset($variables[$attributeKey]);
         }
 
         return array_replace($vars, $variables);
