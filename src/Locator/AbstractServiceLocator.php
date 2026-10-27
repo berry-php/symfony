@@ -5,37 +5,54 @@ declare(strict_types=1);
 namespace Berry\Symfony\Locator;
 
 use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Contracts\Service\Attribute\SubscribedService;
 use Override;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use LogicException;
 
 abstract class AbstractServiceLocator implements ServiceSubscriberInterface
 {
-    protected static ContainerInterface $container;
+    public const string TAG = 'berry.service_locator';
+
+    /**
+     * @var array<class-string, ContainerInterface>
+     */
+    private static array $containers = [];
 
     public function __construct(ContainerInterface $container)
     {
-        static::$container = $container;
+        self::$containers[static::class] = $container;
     }
 
     /**
-     * @return class-string[]
+     * @return array<array-key, class-string>
      */
     abstract public static function services(): array;
 
     #[Override]
     public static function getSubscribedServices(): array
     {
-        return array_column(
-            array_map(static fn(string $class) => ['key' => $class, 'value' => '?' . $class], static::services()),
-            'value',
-            'key',
-        );
+        $services = [];
+
+        foreach (static::services() as $id => $class) {
+            // a string key alone is only a name, Symfony would still resolve by type
+            $services[] = is_int($id)
+                ? '?' . $class
+                : new SubscribedService($id, $class, true, new Autowire(service: $id));
+        }
+
+        return $services;
     }
 
     protected static function getService(string $id, string $packageName): mixed
     {
-        if (!static::$container->has($id)) {
+        $container = self::$containers[static::class] ?? throw new LogicException(sprintf(
+            'The service locator "%s" has not been booted yet. Is it registered as a service?',
+            static::class,
+        ));
+
+        if (!$container->has($id)) {
             throw new LogicException(sprintf(
                 'The service "%s" is not available. Try running "composer require %s".',
                 $id,
@@ -43,6 +60,6 @@ abstract class AbstractServiceLocator implements ServiceSubscriberInterface
             ));
         }
 
-        return static::$container->get($id);
+        return $container->get($id);
     }
 }

@@ -29,16 +29,17 @@
         "symfony/framework-bundle": "^7|^8"
     },
     "require-dev": {
+        "carthage-software/mago": "^1.59",
         "pestphp/pest": "^4",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-deprecation-rules": "^2.0",
         "phpstan/phpstan-symfony": "^2.0",
         "symfony/asset": "^7|^8",
+        "symfony/asset-mapper": "^7|^8",
         "symfony/form": "^7|^8",
         "symfony/security-bundle": "^7|^8",
-        "symfony/ux-icons": "^2",
-        "carthage-software/mago": "^1.59"
+        "symfony/ux-icons": "^2"
     },
     "scripts": {
         "test": "php vendor/bin/pest",
@@ -51,6 +52,7 @@
     },
     "suggest": {
         "symfony/asset": "Allows generating asset URLs within components",
+        "symfony/asset-mapper": "Allows rendering the importmap within components",
         "symfony/form": "Allows rendering Symfony forms with Berry",
         "symfony/ux-icons": "Required to render icons via the IconFactory",
         "symfony/security-bundle": "Allows accessing the current user, token or check permissions within components",

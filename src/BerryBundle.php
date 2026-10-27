@@ -13,6 +13,7 @@ use Berry\Symfony\Form\Elements\TextAreaFormElement;
 use Berry\Symfony\Form\FormElementRegistry;
 use Berry\Symfony\Form\FormRenderer;
 use Berry\Symfony\Form\FormRendererInterface;
+use Berry\Symfony\Locator\AbstractServiceLocator;
 use Berry\Symfony\Locator\ComponentServiceLocator;
 use Berry\Symfony\Twig\TwigViewExtension;
 use Berry\Symfony\UX\IconFactory;
@@ -25,6 +26,7 @@ use Reflector;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 use Twig\Extension\AbstractExtension;
@@ -33,6 +35,8 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_it
 
 class BerryBundle extends AbstractBundle
 {
+    private const string LOCATORS_SERVICE = 'berry.service_locators';
+
     #[Override]
     public function build(ContainerBuilder $container): void
     {
@@ -50,6 +54,8 @@ class BerryBundle extends AbstractBundle
             $definition->addTag(AsTwigViewPass::TAG, ['name' => $attribute->name]);
         });
 
+        $container->registerForAutoconfiguration(AbstractServiceLocator::class)->addTag(AbstractServiceLocator::TAG);
+
         $container->addCompilerPass(new AsTwigViewPass());
     }
 
@@ -63,8 +69,13 @@ class BerryBundle extends AbstractBundle
 
         $services
             ->set(ComponentServiceLocator::class)
-            ->public()
             ->tag('container.service_subscriber');
+
+        $services
+            ->set(self::LOCATORS_SERVICE, ServiceLocator::class)
+            ->public()
+            ->args([tagged_iterator(AbstractServiceLocator::TAG)])
+            ->tag('container.service_locator');
 
         if (class_exists(AbstractExtension::class)) {
             $services
@@ -105,8 +116,15 @@ class BerryBundle extends AbstractBundle
     #[Override]
     public function boot(): void
     {
-        if ($this->container?->has(ComponentServiceLocator::class)) {
-            $this->container->get(ComponentServiceLocator::class);
+        if (!$this->container?->has(self::LOCATORS_SERVICE)) {
+            return;
+        }
+
+        $locators = $this->container->get(self::LOCATORS_SERVICE);
+        assert($locators instanceof ServiceLocator);
+
+        foreach ($locators->getProvidedServices() as $id => $_) {
+            $locators->get((string) $id);
         }
     }
 

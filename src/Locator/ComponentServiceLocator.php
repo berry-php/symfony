@@ -8,6 +8,8 @@ use Berry\Symfony\Form\FormRendererInterface;
 use Override;
 use Berry\Symfony\UX\IconFactoryInterface;
 use Symfony\Component\Asset\Packages;
+use Symfony\Component\AssetMapper\ImportMap\ImportMapRenderer;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -30,6 +32,8 @@ class ComponentServiceLocator extends AbstractServiceLocator
             TranslatorInterface::class,
             TwigEnvironment::class,
             FormRendererInterface::class,
+            'parameter_bag' => ContainerBagInterface::class,
+            'asset_mapper.importmap.renderer' => ImportMapRenderer::class,
         ];
     }
 
@@ -85,5 +89,17 @@ class ComponentServiceLocator extends AbstractServiceLocator
     {
         /** @var FormRendererInterface */
         return self::getService(FormRendererInterface::class, 'symfony/form');
+    }
+
+    public static function getParameterBag(): ContainerBagInterface
+    {
+        /** @var ContainerBagInterface */
+        return self::getService('parameter_bag', 'symfony/dependency-injection');
+    }
+
+    public static function getImportMapRenderer(): ImportMapRenderer
+    {
+        /** @var ImportMapRenderer */
+        return self::getService('asset_mapper.importmap.renderer', 'symfony/asset-mapper');
     }
 }

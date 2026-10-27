@@ -23,4 +23,9 @@ trait WithTranslatorLocator
             $locale,
         );
     }
+
+    protected function getLocale(): string
+    {
+        return ($this->translatorLocator ?? ComponentServiceLocator::getTranslator())->getLocale();
+    }
 }
