@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Berry\Symfony;
 
+use Closure;
 use Berry\Symfony\DependencyInjection\Compiler\AsTwigViewPass;
+use Berry\Symfony\ErrorRenderer\AbstractErrorPage;
+use Berry\Symfony\ErrorRenderer\BerryErrorRenderer;
 use Berry\Symfony\Form\Elements\ButtonFormElement;
 use Berry\Symfony\Form\Elements\CheckboxFormElement;
 use Berry\Symfony\Form\Elements\ChoiceFormElement;
@@ -23,14 +26,19 @@ use Override;
 use ReflectionClass;
 use ReflectionNamedType;
 use Reflector;
+use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ServiceLocator;
+use Symfony\Component\ErrorHandler\ErrorRenderer\HtmlErrorRenderer;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 use Twig\Extension\AbstractExtension;
 
+use function Symfony\Component\DependencyInjection\Loader\Configurator\inline_service;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\tagged_iterator;
 
 class BerryBundle extends AbstractBundle
@@ -59,6 +67,27 @@ class BerryBundle extends AbstractBundle
         $container->addCompilerPass(new AsTwigViewPass());
     }
 
+    #[Override]
+    public function configure(DefinitionConfigurator $definition): void
+    {
+        $definition
+            ->rootNode()
+            ->children()
+            ->scalarNode('error_page')
+            ->info('AbstractErrorPage subclass used to render HTML error pages')
+            ->defaultNull()
+            ->validate()
+            ->ifTrue(
+                static fn(mixed $class): bool => (
+                    $class !== null && (!is_string($class) || !is_a($class, AbstractErrorPage::class, true))
+                ),
+            )
+            ->thenInvalid('%s must be a class extending ' . AbstractErrorPage::class)
+            ->end()
+            ->end()
+            ->end();
+    }
+
     /**
      * @param array<array-key, mixed> $config
      */
@@ -76,6 +105,21 @@ class BerryBundle extends AbstractBundle
             ->public()
             ->args([tagged_iterator(AbstractServiceLocator::TAG)])
             ->tag('container.service_locator');
+
+        if (is_string($config['error_page'])) {
+            $services
+                ->set(BerryErrorRenderer::class)
+                // -1 so TwigErrorRenderer (if installed) keeps its required HtmlErrorRenderer as inner service
+                ->decorate('error_renderer.html', null, -1)
+                ->args([
+                    service('.inner'),
+                    $config['error_page'],
+                    inline_service(Closure::class)
+                        ->factory([HtmlErrorRenderer::class, 'isDebug'])
+                        ->args([service('request_stack'), param('kernel.debug')]),
+                    param('kernel.charset'),
+                ]);
+        }
 
         if (class_exists(AbstractExtension::class)) {
             $services
